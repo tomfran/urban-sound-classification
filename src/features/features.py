@@ -83,8 +83,9 @@ class Features:
         Client(n_workers = self.workers)
         
         feature_arrays = []
-        for i in tqdm(range(len(values))):
-            r = m(values[i])
+        # for i in tqdm(range(len(values))):
+        for e in values:
+            r = m(e)
             feature_arrays.append(r)
         
         feature_arrays = dask.compute(*feature_arrays)
