@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 class Dataset:
     
     def __init__(self, 
-                 dataset_path="data/processed/07_18_2021.csv", 
+                 dataset_path, 
                  test_size=0.1):
         self.dataset_path = dataset_path
         self.test_size = test_size

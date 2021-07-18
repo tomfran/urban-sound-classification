@@ -2,12 +2,15 @@ import librosa
 import numpy as np
 import pandas as pd
 from glob import glob 
-from tqdm.notebook import tqdm
 import warnings
 from datetime import date
+
 import dask
 from dask import delayed
 from dask.distributed import Client
+
+from pickle import dump, load
+from sklearn import preprocessing
 
 
 warnings.filterwarnings("ignore")
@@ -62,7 +65,6 @@ class Features:
         total = np.concatenate((mfcc, chroma_stft, rms), axis=0)
         return np.apply_along_axis(array_map, 1, total).flatten()
 
-
     def get_dataframe(self):
         """
         Get the dataframe that represent the training dataset. 
@@ -92,6 +94,31 @@ class Features:
         
         columns = ["class"] + [f"f_{i}" for i in range(len(feature_arrays[0]) -1)]
         return pd.DataFrame(feature_arrays, columns=columns)
+    
+    def scale_dataframe(self, 
+                        dataframe,
+                        save_path="../models/scalers/scaler_training.pkl", 
+                        save_scaler=False):
+        x = dataframe.drop("class", axis=1)
+        scaler = preprocessing.StandardScaler().fit(x)
+        
+        scaled_x = scaler.transform(x)
+        scaled_df = pd.DataFrame(data=scaled_x, columns=dataframe.columns[1:])
+        scaled_df.insert(0, "class", dataframe["class"])
+        
+        if save_scaler:
+            dump(scaler, open(save_path, "wb"))
+        
+        return scaled_df
+    
+    def apply_scaling(self, dataframe, scaler_load_path):
+        scaler = load(open(scaler_load_path, "rb"))
+        x = dataframe.drop("class", axis=1)
+        scaled_x = scaler.transform(x)
+        scaled_df = pd.DataFrame(data=scaled_x, columns=dataframe.columns[1:])
+        scaled_df.insert(0, "class", dataframe["class"])
+        return scaled_df
+        
     
     def save_dataframe(self, dataframe):
         dataframe.to_csv(self.save_path, index=False)  
