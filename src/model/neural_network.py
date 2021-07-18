@@ -12,6 +12,26 @@ class NeuralNetwork:
                  loss=keras.losses.SparseCategoricalCrossentropy(),
                  metrics=[keras.metrics.SparseCategoricalAccuracy()]
                  ):
+        """
+        Initialize Neural Network object.
+        It compiles the network.
+
+        Args:
+            layers (keras layer list, optional): list of layers to use in the neural network. 
+            Defaults to [layers.Dense(units=132, activation='relu'), 
+                         layers.Dense(91, activation='relu'), 
+                         layers.Dense(50, activation='relu'), 
+                         layers.Dense(10, activation='softmax')].
+            
+            optimizer (keras optimizer, optional): optimizer to use on the network. 
+            Defaults to keras.optimizers.RMSprop().
+            
+            loss (keras loss, optional): loss to use on the network. 
+            Defaults to keras.losses.SparseCategoricalCrossentropy().
+            
+            metrics (keras metrics, optional): metrics to use. 
+            Defaults to [keras.metrics.SparseCategoricalAccuracy()].
+        """
         
         self.model = keras.Sequential(layers)
         self.model.compile(optimizer=optimizer, 
@@ -22,10 +42,10 @@ class NeuralNetwork:
             x_train, 
             y_train, 
             validation_data=(),
-            batch_size=500, 
+            batch_size=128, 
             epochs=10, 
             ):
-        
+
         return self.model.fit(
             x_train, y_train, 
             batch_size=batch_size, 

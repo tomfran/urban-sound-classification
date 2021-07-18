@@ -12,7 +12,10 @@ from dask.distributed import Client
 from pickle import dump, load
 from sklearn import preprocessing
 
-
+"""
+Ignore the warnings as librosa produce some when extracting
+feature from certain audio files. They are related to short audios.
+"""
 warnings.filterwarnings("ignore")
 
 class Features:
@@ -25,12 +28,15 @@ class Features:
                  folds=[1,2,3,4,6], 
                  workers=4):
         """
-        Initialize Feature object
+        Initialize Features object
 
         Args:
-            metadata_path (str, optional): csv dataset metadata. Defaults to "data/UrbanSound8K/metadata/UrbanSound8K.csv".
-            audio_files_path (str, optional): folder with the audio files. Defaults to "data/UrbanSound8K/audio".
-            folds (int, optional): first N folds to extract. Defaults to 5.
+            metadata_path (str, optional): path to the metadata file. Defaults to "data/raw/metadata/UrbanSound8K.csv".
+            audio_files_path (str, optional): path to the audio files. Defaults to "data/raw/audio".
+            save_path (str, optional): path where to save the processed dataframe. Defaults to "data/processed".
+            save_name (str, optional): dataframe name, it will be concatenated to the current date. Defaults to "train".
+            folds (list, optional): folds to open. Defaults to [1,2,3,4,6].
+            workers (int, optional): number of workers for Dask client. Defaults to 4.
         """
         self.metadata_path = metadata_path
         self.audio_files_path = audio_files_path
@@ -40,10 +46,13 @@ class Features:
 
     def get_features(self, audio_file):
         """
-        Extract features from an audio file using Librosa
+        Extract features from an audio file
 
         Args:
-            audio_file (str): audio file path to load
+            audio_file (str): path to the audio file
+        
+        Returns: 
+            Numpy array: extracted features
         """
         def array_map(array):
             return [
@@ -99,6 +108,17 @@ class Features:
                         dataframe,
                         save_path="../models/scalers/scaler_training.pkl", 
                         save_scaler=False):
+        """
+        Scale the dataframe and optionally save the scaler on file.
+
+        Args:
+            dataframe (Pandas dataframe): dataframe to scale
+            save_path (str, optional): path where to save the scaler. Defaults to "../models/scalers/scaler_training.pkl".
+            save_scaler (bool, optional): Choose wether to save the scaler on disk or not. Defaults to False.
+
+        Returns:
+            Pandas dataframe: scaled dataframe
+        """
         x = dataframe.drop("class", axis=1)
         scaler = preprocessing.StandardScaler().fit(x)
         
@@ -112,6 +132,17 @@ class Features:
         return scaled_df
     
     def apply_scaling(self, dataframe, scaler_load_path):
+        """
+        Apply scaling to a dataframe, with a scaler loaded 
+        from disk.
+
+        Args:
+            dataframe (Pandas dataframe): dataframe to scale
+            scaler_load_path (str): path to the scaler on disk
+
+        Returns:
+            Pandas dataframe: scaled dataframe
+        """
         scaler = load(open(scaler_load_path, "rb"))
         x = dataframe.drop("class", axis=1)
         scaled_x = scaler.transform(x)
@@ -121,4 +152,10 @@ class Features:
         
     
     def save_dataframe(self, dataframe):
+        """
+        Save the dataframe to disk
+
+        Args:
+            dataframe (Pandas Dataframe): dataframe to save on disk
+        """
         dataframe.to_csv(self.save_path, index=False)  
