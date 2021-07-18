@@ -17,8 +17,9 @@ class Features:
     def __init__(self, 
                  metadata_path="data/raw/metadata/UrbanSound8K.csv", 
                  audio_files_path="data/raw/audio", 
-                 save_training_path="data/processed",
-                 folds=5, 
+                 save_path="data/processed",
+                 save_name="train",
+                 folds=[1,2,3,4,6], 
                  workers=4):
         """
         Initialize Feature object
@@ -31,7 +32,7 @@ class Features:
         self.metadata_path = metadata_path
         self.audio_files_path = audio_files_path
         self.folds = folds
-        self.save_training_path = f"{save_training_path}/{date.today().strftime('%m_%d_%Y')}.csv"
+        self.save_path = f"{save_path}/{save_name}_{date.today().strftime('%m_%d_%Y')}.csv"
         self.workers = workers
 
     def get_features(self, audio_file):
@@ -62,7 +63,7 @@ class Features:
         return np.apply_along_axis(array_map, 1, total).flatten()
 
 
-    def get_training_dataframe(self):
+    def get_dataframe(self):
         """
         Get the dataframe that represent the training dataset. 
         The structure is [class, feature_1, feature_2, ...]
@@ -72,7 +73,7 @@ class Features:
             Pandas Dataframe: training dataset
         """
         data = pd.read_csv(self.metadata_path)
-        training_data = data[data["fold"] <= self.folds]
+        training_data = data[data["fold"].isin(self.folds)]
         values = training_data[["slice_file_name", "fold", "classID"]].values
         
         @delayed
@@ -83,7 +84,6 @@ class Features:
         Client(n_workers = self.workers)
         
         feature_arrays = []
-        # for i in tqdm(range(len(values))):
         for e in values:
             r = m(e)
             feature_arrays.append(r)
@@ -93,5 +93,5 @@ class Features:
         columns = ["class"] + [f"f_{i}" for i in range(len(feature_arrays[0]) -1)]
         return pd.DataFrame(feature_arrays, columns=columns)
     
-    def save_training_set(self, dataframe):
-        dataframe.to_csv(self.save_training_path, index=False)
+    def save_dataframe(self, dataframe):
+        dataframe.to_csv(self.save_path, index=False)  
