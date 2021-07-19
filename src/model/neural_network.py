@@ -44,6 +44,7 @@ class NeuralNetwork:
             validation_data=(),
             batch_size=128, 
             epochs=10, 
+            verbose=1
             ):
 
         return self.model.fit(
@@ -51,7 +52,7 @@ class NeuralNetwork:
             batch_size=batch_size, 
             epochs=epochs,
             validation_data=validation_data, 
-            verbose=2
+            verbose=verbose
         )
         
         

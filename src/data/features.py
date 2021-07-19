@@ -21,9 +21,9 @@ warnings.filterwarnings("ignore")
 class Features:
     
     def __init__(self, 
-                 metadata_path="data/raw/metadata/UrbanSound8K.csv", 
-                 audio_files_path="data/raw/audio", 
-                 save_path="data/processed",
+                 metadata_path="../data/raw/metadata/UrbanSound8K.csv", 
+                 audio_files_path="../data/raw/audio", 
+                 save_path="../data/processed",
                  save_name="train",
                  folds=[1,2,3,4,6], 
                  workers=4):
@@ -41,7 +41,8 @@ class Features:
         self.metadata_path = metadata_path
         self.audio_files_path = audio_files_path
         self.folds = folds
-        self.save_path = f"{save_path}/{save_name}_{date.today().strftime('%m_%d_%Y')}.csv"
+        self.save_path = save_path
+        self.save_name = save_name
         self.workers = workers
 
     def get_features(self, audio_file):
@@ -151,11 +152,14 @@ class Features:
         return scaled_df
         
     
-    def save_dataframe(self, dataframe):
+    def save_dataframe(self, dataframe, save_name=""):
         """
         Save the dataframe to disk
 
         Args:
             dataframe (Pandas Dataframe): dataframe to save on disk
         """
-        dataframe.to_csv(self.save_path, index=False)  
+        if not save_name: 
+            save_name = self.save_name
+
+        dataframe.to_csv(f"{self.save_path}/{save_name}.csv", index=False)

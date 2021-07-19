@@ -1,0 +1,39 @@
+\documentclass[a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{varioref}
+
+\mathtoolsset{showonlyrefs}  
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\setlength{\parindent}{0pt}
+
+\title{Urban sound classification}
+\author{Francesco Tomaselli}
+\makeindex
+\begin{document}
+\maketitle
+\input{chapters/preface.tex}
+\tableofcontents
+% \setlength{\parskip}{0.8em}
+\newpage
+\input{chapters/introduction.tex}
+\input{chapters/feature_extraction.tex}
+\input{chapters/model.tex}
+\input{chapters/results.tex}
+\input{chapters/conclusion.tex}
+
+\newpage
+\end{document}
