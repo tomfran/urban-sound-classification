@@ -1,5 +1,10 @@
+import tensorflow
 from tensorflow import keras
 from tensorflow.keras import layers
+
+from numpy.random import seed
+seed(1)
+tensorflow.random.set_seed(1)
 
 class NeuralNetwork:
     

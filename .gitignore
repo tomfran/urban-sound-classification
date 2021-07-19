@@ -3,6 +3,7 @@
 .vscode
 models
 notebooks/test*
+*references.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

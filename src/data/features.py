@@ -63,16 +63,23 @@ class Features:
                     np.mean(array)
                 ]
         
-        def array_reduce(a, b):
-            return a + b
-        
         y, sr = librosa.load(audio_file, sr = None)
             
         mfcc = librosa.feature.mfcc(y, sr)
+        
         chroma_stft = librosa.feature.chroma_stft(y, sr)
+        
         rms = librosa.feature.rms(y, sr)
         
-        total = np.concatenate((mfcc, chroma_stft, rms), axis=0)
+        zero = librosa.feature.zero_crossing_rate(y)
+        
+        S, phase = librosa.magphase(librosa.stft(y))
+        rolloff = librosa.feature.spectral_rolloff(S=S, sr=sr)
+        
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+        # total = np.concatenate((mfcc, chroma_stft, rms), axis=0)
+        total = np.concatenate((mfcc, chroma_stft, rms, zero, rolloff, np.array([onset_env])), axis=0)
         return np.apply_along_axis(array_map, 1, total).flatten()
 
     def get_dataframe(self):
