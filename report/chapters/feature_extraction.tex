@@ -1,4 +1,65 @@
 \section{Feature extraction}
-\subsection{Feature selection}
-\subsection{Scaling}
-\subsection{PCA}
+
+The dataset contains ten folds of audio samples, each one about 
+four seconds long. The samples are divided in ten classes.
+
+The training set consists of the first four folds plus the sixth, 
+the other folds create five different test sets.
+
+\subsection{First dataset}
+Choosing the features to extract was difficult as I did not have 
+prior experience working with audio. 
+
+The \emph{Librosa} library provides many feature to choose from, 
+for my first try with this dataset I kept it simple 
+by opting for these three ones: 
+\begin{enumerate}
+    \item \emph{Mel-frequency cepstral coefficients}
+    \item \emph{Chromagram}
+    \item \emph{Root-mean-square}
+\end{enumerate}
+Each feature consists of an array of arrays containing measurements. 
+I applied a series of functions to each sub-array and then concatenated 
+the results in a final feature vector. 
+The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} and \emph{median}.
+
+This approach resulted in 132 components feature vectors.
+
+\paragraph{Feature scaling}
+After testing some neural networks on the first dataset the results 
+were not promising. One of the reasons is the big difference in 
+ranges among feature vector components.
+
+\dots
+% TALK ABOUT WHAT SCALER YOU USED
+
+To mitigate this effect scaling was applied to the dataset.
+This lead to an improvement on the results using the same 
+model as before. 
+
+The scaler trained on the training set was then 
+used to scale the five different tests sets.
+
+\subsection{Extended dataset}
+To improve results on the test sets new features were added 
+to the dataset, namely: 
+\begin{enumerate}
+    \item \emph{Zero-crossing rate}
+    \item \emph{Roll-off frequency}
+    \item \emph{Spectral flux onset strength}
+\end{enumerate}
+After applying the same four functions to these three new arrays, 
+a total of 12 new features were added to the dataset.
+Also, as scaling yield to promising results, 
+the same scaler was used on this new dataset. 
+
+After testing a really simple network on the new dataset 
+results improved once again.
+
+\paragraph{PCA}
+Scaling lead to important improvements on the first dataset, 
+so I decided to try the PCA to select the most important
+features from the extended one.
+
+\dots
+% TALK ABOUT RESULTS
