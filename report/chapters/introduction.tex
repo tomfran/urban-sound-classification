@@ -1,4 +1,40 @@
 \section{Introduction}
 
+\emph{I declare that this material, which I now submit for assessment, 
+is entirely my own work and has not been taken from the work of others, 
+save and to the extent that such work has been cited and acknowledged within 
+the text of my work. I understand that plagiarism, collusion, and copying 
+are grave and serious offences in the university and accept the penalties that 
+would be imposed should I engage in plagiarism, collusion or copying. 
+This assignment, or any part of it, has not been previously submitted by 
+me or any other person for assessment on this or any other course of study.}
+
 The goal of this project is to build a neural network to classify audio 
 files from the \emph{UrbanSound8k} dataset.
+
+This dataset contains audio divided in ten classes, each one representing 
+a different type of city sound, for instance, we can find \emph{car horns}, 
+\emph{dogs barking}, \emph{sirens}, etc. A deeper discussion about 
+the dataset is present in the Subsection \vref*{dataset-structure}.
+
+The presented methodology is composed of three main parts.
+The first step is to extract relevant features from audio files using the
+\emph{Librosa} library. This is discussed on Section 
+\vref*{feature-extraction}.\\
+The next step consists in composing and refining a neural network 
+to classify the data obtained from the previous step. This part is 
+made possible by the \emph{Keras} library and it is discussed in 
+Section \vref*{model-definition}.\\
+Lastly, results from the classification, namely accuracy 
+and standard deviation among test sets, are presented in 
+Section \vref*{results}.
+
+The project is developed in \emph{Python} and the code is structured in 
+a \emph{src} package. Each one of the sub-packages contains code to deal 
+with the different parts of the project. For instance, the \emph{data} folder 
+contains the classes to extract features and to manage a dataset.
+
+In addition to the package there is a \emph{notebook} folder containing
+the different steps of the project and the various experiments made.
+
+\newpage
