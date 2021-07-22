@@ -11,6 +11,7 @@ from dask.distributed import Client
 
 from pickle import dump, load
 from sklearn import preprocessing
+from sklearn.decomposition import PCA
 
 """
 Ignore the warnings as librosa produce some when extracting
@@ -139,6 +140,8 @@ class Features:
         
         return scaled_df
     
+
+    
     def apply_scaling(self, dataframe, scaler_load_path):
         """
         Apply scaling to a dataframe, with a scaler loaded 
@@ -157,7 +160,32 @@ class Features:
         scaled_df = pd.DataFrame(data=scaled_x, columns=dataframe.columns[1:])
         scaled_df.insert(0, "class", dataframe["class"])
         return scaled_df
+    
+    def select_features(self, 
+                        dataframe,
+                        n=120, 
+                        save_path="../models/pca/pca_training.pkl",
+                        save_pca=False):
         
+        pca = PCA(n_components=n)
+        x = dataframe.drop("class", axis=1)
+        reduced_x = pca.fit_transform(x)
+        reduced_df = pd.DataFrame(data=reduced_x, columns=dataframe.columns[1:n+1])
+        reduced_df.insert(0, "class", dataframe["class"])
+        
+        if save_pca:
+            dump(pca, open(save_path, "wb"))
+        
+        return reduced_df
+
+    def apply_pca(self, dataframe, pca_load_path):
+        pca = load(open(pca_load_path, "rb"))
+        x = dataframe.drop("class", axis=1)
+        reduced_x = pca.transform(x)
+        reduced_df = pd.DataFrame(data=reduced_x, columns=dataframe.columns[1:pca.components_.shape[0]+1])
+        reduced_df.insert(0, "class", dataframe["class"])
+        return reduced_df
+
     
     def save_dataframe(self, dataframe, save_name=""):
         """

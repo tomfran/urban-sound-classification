@@ -2,19 +2,59 @@
 \label{feature-extraction}
 
 This Sections presents the original dataset structure and the 
-steps followed to create training and test sets from it. 
+steps followed to create training and test sets from it.
+
+Note that the models mentioned in this section are
+three layers networks with a reasonable number of neurons 
+and default parameters for the Stochastic Gradient 
+Descent optimizer. 
+Details about models used in the project can be found 
+in the next Section.
 
 \subsection{Dataset structure}
 \label{dataset-structure}
 
 The dataset contains ten folds of audio samples, each one about 
 four seconds long. The samples are divided in ten classes among ten 
-folds.
+folds. The following table shows the classes and their relative frequency 
+in the dataset.
+
+\begin{center}
+    \begin{tabular}{ |l|c| } 
+        \hline
+        Class name & Number of samples \\
+        \hline
+        air conditioner & 1000 \\
+        car horn & 429 \\
+        children playing & 1000 \\
+        dog bark & 1000 \\
+        drilling & 1000 \\
+        engine idling & 1000 \\
+        gun shot & 374 \\
+        jackhammer & 1000 \\
+        siren & 929 \\
+        street music & 1000 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 The training set consists of the first four folds plus the sixth, 
 the other folds create five different test sets.
 
-The classes presents 
+\begin{center}
+    \begin{tabular}{ |l|c| } 
+        \hline
+        Dataset & Number of samples \\
+        \hline
+        Training set & 4499 \\
+        Test set 5 & 936 \\
+        Test set 7 & 838 \\
+        Test set 8 & 806 \\
+        Test set 9 & 816 \\
+        Test set 10 & 837 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \subsection{First dataset}
 Choosing the features to extract was difficult as I did not have 
@@ -40,36 +80,32 @@ After testing some neural networks on the first dataset the results
 were not promising. One of the reasons is the big difference in 
 ranges among feature vector components.
 
-\dots
-% TALK ABOUT WHAT SCALER YOU USED
-
-To mitigate this effect scaling was applied to the dataset.
+To mitigate this effect a \emph{StandardScaler} from \emph{sklearn} was applied.
 This lead to an improvement on the results using the same 
 model as before. 
-
 The scaler trained on the training set was then 
-used to scale the five different tests sets.
+used to scale the five different test sets.
 
 \subsection{Extended dataset}
-To improve results on the test sets new features were added 
-to the dataset, namely: 
+To improve results on the test sets new features are added 
+to the training one, namely: 
 \begin{enumerate}
     \item \emph{Zero-crossing rate}
     \item \emph{Roll-off frequency}
     \item \emph{Spectral flux onset strength}
 \end{enumerate}
 After applying the same four functions to these three new arrays, 
-a total of 12 new features were added to the dataset.
-Also, as scaling yield to promising results, 
-the same scaler was used on this new dataset. 
+a total of twelve new features are added to the dataset.
+Scaling yield to promising results on the first dataset, 
+so the same approach is applied to the extended dataset.
 
-After testing a really simple network on the new dataset 
-results improved once again.
+After testing a network on the new dataset results improved once again.
 
 \paragraph{PCA}
-Scaling lead to important improvements on the first dataset, 
-so I decided to try the PCA to select the most important
-features from the extended one.
+Adding new features can be lead to better results 
+in the end but they all need to be useful to the model, so on 
+the extended dataset I experimented with feature selection, 
+in particular I applied the \emph{PCA} algorithm from sklearn.
 
-\dots
-% TALK ABOUT RESULTS
+After some experiments with the number of features to select, 125 out of 144 
+features were selected. This led to a small improvement in accuracy.
