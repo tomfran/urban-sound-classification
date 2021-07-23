@@ -2,24 +2,26 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+% \usepackage[a4paper, total={6in, 8.5in}]{geometry}
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{mathtools}
 \usepackage{amsthm}
 \usepackage{varioref}
 \usepackage{tikz}
+
 \usetikzlibrary{positioning}
 
 \tikzset{%
   every neuron/.style={
     circle,
     draw,
-    minimum size=1cm
+    minimum size=0.8cm
   },
   neuron missing/.style={
     draw=none, 
     scale=4,
-    text height=0.333cm,
+    text height=0.2cm,
     execute at begin node=\color{black}$\vdots$
   },
 }
@@ -48,7 +50,4 @@
 \input{chapters/feature_extraction.tex}
 \input{chapters/model.tex}
 \input{chapters/results.tex}
-\input{chapters/conclusion.tex}
-
-\newpage
 \end{document}

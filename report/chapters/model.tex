@@ -1,7 +1,9 @@
 \section{Model definition}
 \label{model-definition}
 This Section presents how the networks used on the training set are 
-structured and how the Hyperparameter tuning phase was performed.
+structured, the second Subsection gives an overview of the performances 
+on the different training sets, lastly, the Hyperparameter tuning phase
+is described.
 
 \subsection{Neural network structure}
 The starting point for the neural network structure was a 
@@ -82,6 +84,45 @@ As discussed in the previous Section, models with this logic for
 construction were tested on the four training sets to choose the one to tune 
 the final network on.
 
+\subsection{Initial training set results}
+
+Section \vref{feature-extraction} talked about the four different 
+training sets obtained from the dataset and, without going into details, 
+stated that there was continuous improvement. This subsection presents
+the results obtained on the training set. 
+
+Note that all the random seeds used by tensorflow were fixed 
+to make results reproducible.
+
+\paragraph{Cross validation}
+To estimate performance on the training set \emph{cross validation} with 
+5 folds was used. Basically the dataset is divided into five folds, 
+and a model is repeatly trained on four and tested on one. 
+The mean accuracy on the testing folds gives a hint about the model performance.
+
+\paragraph{Results}
+For each training set presented, a model was defined 
+with the structure presented at the beginning of this Section, 
+and these are the results:
+
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Training set & Mean accuracy & St. deviation \\
+        \hline
+        132 features unscaled &  0.0669 & 0.0488 \\
+        132 features scaled &  0.5201 & 0.0668 \\
+        144 features scaled &  0.5586 & 0.0842 \\
+        120 features reduced with PCA &  0.5608 & 0.0998 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+There is a huge improvement after scaling the training set, after 
+that small refinements were made.
+As accuracy is the best on the last dataset, this was the one selected to 
+perform the Hyperparameter tuning.
+
 \subsection{Hyperparameter tuning}
 
 Choosing the training set with PCA applied, led to the best results 
@@ -120,21 +161,71 @@ tweaked to find a better one.
 The optimizer used is the \emph{Stochastic Gradient Descent}.
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
-    \item \emph{Neurons}: first and last layer stay the same, while 
+    \item \emph{Neurons}: first and last layers stay the same, while 
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
     $$60 + 2i\;\;\text{and}\;\;25 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
     \item \emph{Learning rate}: $0.001, 0.01, 0.1, 0.5$
     \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$
-    \item \emph{Epochs}: $80, 100, 120$
-    \item \emph{Batch sizes}: $32, 64, 128$
 \end{enumerate}
 
-An early stopper is used on the fit, and cross validation with 5 folds is 
-performed on each combination.
-The total possible models are 3600, but the search was performed with 200 iterations
+An early stopper is used on the fit with 100 \emph{epochs}, \emph{batch size} 
+is fixed at 
+32, and cross validation with 5 folds is performed on each combination.
+The total possible models are 400, but the search was performed with 100 iterations
 in total.
+
+The best model found was the following: 
+\begin{itemize}
+    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output 
+    \item \emph{Momentum}: 0.1
+    \item \emph{Learning rate}: 0.1
+\end{itemize}
+Comparing the initial model with the one found now, a small improvement 
+can be seen both in accuracy and standard deviation:
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Model & Mean accuracy & St. deviation \\
+        \hline
+        Initial model & 0.5608& 0.0998\\
+        Random search result & 0.5857 & 0.0715 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \paragraph{Grid search}
 The best model from the random search was then fine-tuned with a Grid Search, 
 where ranges are in the proximity of the parameters found by the previous search.
+
+Parameters this time was:
+\begin{enumerate}
+    \item \emph{Neurons}: first and last layer stay the same, while 
+    the two hidden layers are tested with a number of neurons respectively 
+    equals to: 
+    $$62 + i\;\;\text{and}\;\;27 + j,\;\;\text{with}\;\; i, j \in \{-1,0,1\}$$
+    \item \emph{Learning rate}: $0.08, 0.1, 0.12$
+    \item \emph{Momentum}: $0.08, 0.1, 0.12$
+\end{enumerate}
+
+The total possible models was 81, the best found is the following:
+\begin{itemize}
+    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 28 for the second, and 10 for output 
+    \item \emph{Momentum}: 0.12
+    \item \emph{Learning rate}: 0.08
+\end{itemize}
+As before, a comparison shows that Grid Search fine tuned the model 
+to have better accuracy, unfortunately standard deviation increased by a small 
+quantity:
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Model & Mean accuracy & St. deviation \\
+        \hline
+        Initial model & 0.5608& 0.0998\\
+        Random search result & 0.5857 & 0.0715 \\
+        Grid search result & 0.5877 & 0.0763 \\
+        \hline
+    \end{tabular}
+\end{center}
+\newpage

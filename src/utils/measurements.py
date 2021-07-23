@@ -17,3 +17,5 @@ def show_accuracy_loss(net, scaling="scaled", test_dataset_path="../data/process
 
     print("\nLoss:")
     print(f"\tMean: {np.mean(loss)} \n\tStandard deviation: {np.std(loss)}")
+
+    return accuracy, loss
