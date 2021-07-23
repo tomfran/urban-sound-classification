@@ -42,6 +42,7 @@ in the dataset.
 
 The training set consists of the first four folds plus the sixth, 
 the other folds create five different test sets.
+The table shows the numerosity of the different sets.
 
 \begin{center}
     \begin{tabular}{ |l|c| } 
@@ -88,6 +89,8 @@ This lead to an improvement on the results using the same
 model as before. 
 
 \subsection{Extended dataset}
+\label{extended-dataset}
+
 To improve results on the training set new features are added, namely: 
 \begin{enumerate}
     \item \emph{Zero-crossing rate}
@@ -102,11 +105,13 @@ so the same approach is applied to the extended dataset.
 After testing a network on the new dataset results improved once again.
 
 \paragraph{PCA}
-Adding new features can be lead to better results 
-in the end but they all need to be useful to the model, so on 
+Adding new features can lead to better results 
+in the end but they all need to be useful to the model, so 
 the extended dataset was subject of some experiments with feature selection, 
 in particular \emph{PCA} algorithm from \emph{sklearn} was applied.
 
 After some experiments with the number of features to select, 120 out of 144 
 features were selected. This led to a small improvement on the training set, 
-so this dataset was selected to perform hyperparameter tuning.
+so this final reduced dataset was selected to perform hyperparameter tuning.
+
+\newpage

@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from keras.wrappers.scikit_learn import KerasClassifier
 from ..data import Dataset
-
+from keras.callbacks import EarlyStopping
 from numpy.random import seed
 seed(1)
 tensorflow.random.set_seed(1)
@@ -13,7 +13,6 @@ class NeuralNetwork:
     
     @staticmethod
     def create_model(neurons=(144, 70, 40, 30, 10),
-                    #  optimizer=keras.optimizers.RMSprop(),
                      learning_rate=0.01,
                      momentum=0.0,
                      loss=keras.losses.SparseCategoricalCrossentropy(),
@@ -46,7 +45,8 @@ class NeuralNetwork:
                                   param_grid=param_grid, 
                                   n_jobs=-1, 
                                   scoring="accuracy",
-                                  error_score="raise")
+                                  error_score="raise", 
+                                  verbose=2)
             
         elif method == "random":
             search = RandomizedSearchCV(estimator=model, 
@@ -57,6 +57,10 @@ class NeuralNetwork:
                                         error_score="raise", 
                                         verbose=2, 
                                         random_state=1)
+            
+        stopper = EarlyStopping(monitor='accuracy', patience=3, verbose=0)
+
+        fit_params = dict(callbacks=[stopper])
         
-        results = search.fit(x_train, y_train)
+        results = search.fit(x_train, y_train, **fit_params)
         return results
