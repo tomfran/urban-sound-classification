@@ -7,6 +7,22 @@
 \usepackage{mathtools}
 \usepackage{amsthm}
 \usepackage{varioref}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=1cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=4,
+    text height=0.333cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+}
 
 \mathtoolsset{showonlyrefs}  
 \hypersetup{

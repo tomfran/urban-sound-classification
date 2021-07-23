@@ -5,11 +5,13 @@ This Sections presents the original dataset structure and the
 steps followed to create training and test sets from it.
 
 Note that the models mentioned in this section are
-three layers networks with a reasonable number of neurons 
-and default parameters for the Stochastic Gradient 
+three layers networks with a reasonable number of neurons, trained 
+for 100 epochs with default parameters for the Stochastic Gradient 
 Descent optimizer. 
-Details about models used in the project can be found 
-in the next Section.
+The accuracy on the training is computed with a cross validation 
+approach.
+Details about models and validation techniques used in 
+the project can be found at Section \vref{model-definition}.
 
 \subsection{Dataset structure}
 \label{dataset-structure}
@@ -57,21 +59,22 @@ the other folds create five different test sets.
 \end{center}
 
 \subsection{First dataset}
-Choosing the features to extract was difficult as I did not have 
-prior experience working with audio. 
+Choosing the features to extract was challenging due to the inexperience
+with working on audio files.  
 
-The \emph{Librosa} library provides many feature to choose from, 
-for my first try with this dataset I kept it simple 
-by opting for these three ones: 
+The \emph{Librosa} library provides many feature to choose from,
+to keep it simple, for the first try with this dataset the extracted features 
+are these three ones: 
 \begin{enumerate}
     \item \emph{Mel-frequency cepstral coefficients}
     \item \emph{Chromagram}
     \item \emph{Root-mean-square}
 \end{enumerate}
 Each feature consists of an array of arrays containing measurements. 
-I applied a series of functions to each sub-array and then concatenated 
-the results in a final feature vector. 
-The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} and \emph{median}.
+A series of functions were applied to each sub-array and results 
+were concatenated in a final feature vector. 
+The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} 
+and \emph{median}.
 
 This approach resulted in 132 components feature vectors.
 
@@ -83,19 +86,16 @@ ranges among feature vector components.
 To mitigate this effect a \emph{StandardScaler} from \emph{sklearn} was applied.
 This lead to an improvement on the results using the same 
 model as before. 
-The scaler trained on the training set was then 
-used to scale the five different test sets.
 
 \subsection{Extended dataset}
-To improve results on the test sets new features are added 
-to the training one, namely: 
+To improve results on the training set new features are added, namely: 
 \begin{enumerate}
     \item \emph{Zero-crossing rate}
     \item \emph{Roll-off frequency}
     \item \emph{Spectral flux onset strength}
 \end{enumerate}
 After applying the same four functions to these three new arrays, 
-a total of twelve new features are added to the dataset.
+a total of 12 new features are added to the dataset.
 Scaling yield to promising results on the first dataset, 
 so the same approach is applied to the extended dataset.
 
@@ -104,8 +104,9 @@ After testing a network on the new dataset results improved once again.
 \paragraph{PCA}
 Adding new features can be lead to better results 
 in the end but they all need to be useful to the model, so on 
-the extended dataset I experimented with feature selection, 
-in particular I applied the \emph{PCA} algorithm from sklearn.
+the extended dataset was subject of some experiments with feature selection, 
+in particular \emph{PCA} algorithm from \emph{sklearn} was applied.
 
-After some experiments with the number of features to select, 125 out of 144 
-features were selected. This led to a small improvement in accuracy.
+After some experiments with the number of features to select, 120 out of 144 
+features were selected. This led to a small improvement on the training set, 
+so this dataset was selected to perform hyperparameter tuning.
