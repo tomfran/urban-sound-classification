@@ -73,12 +73,11 @@ the end of Subsection \vref{extended-dataset}, with
         
     \end{tikzpicture}
 \end{center}
-    
 
 The activation function for the input and hidden layers is a \emph{Relu} 
-and the output one uses a \emph{softmax}. 
+and the output one uses a \emph{Softmax}~\cite{relu} \cite{soft}. 
 The loss used is the \emph{Sparse Categorical Crossentropy loss} as it is suited 
-for this kind of problems.
+for this kind of problems~\cite{entropy}.
 
 As discussed in the previous Section, models with this logic for 
 construction were tested on the four training sets to choose the one to tune 
@@ -95,8 +94,8 @@ Note that all the random seeds used by tensorflow were fixed
 to make results reproducible.
 
 \paragraph{Cross validation}
-To estimate performance on the training set \emph{cross validation} with 
-5 folds was used. Basically the dataset is divided into five folds, 
+To estimate performance on the training set \emph{cross-validation} with 
+5 folds was used~\cite{cross}. Basically the dataset is divided into five folds, 
 and a model is repeatly trained on four and tested on one. 
 The mean accuracy on the testing folds gives a hint about the model performance.
 
@@ -135,7 +134,7 @@ to find the best one.
 
 \paragraph{Grid vs Random search}
 Two of the most commonly used strategies in Hyperparameter optimization
-are \emph{Grid} and \emph{Random Search}. 
+are \emph{Grid} and \emph{Random Search}~\cite{random-grid}. 
 
 In both cases we define ranges of parameters to test different combinations, 
 for instance, fixed the number of neurons, one could try to find the best 
@@ -158,7 +157,7 @@ ranges to optimize the previously found model.
 \paragraph{Random search}
 Starting from the model introduced in the previous Subsection, parameters are 
 tweaked to find a better one.
-The optimizer used is the \emph{Stochastic Gradient Descent}.
+The optimizer used is the \emph{Stochastic Gradient Descent}~\cite{sgd}.
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
     \item \emph{Neurons}: first and last layers stay the same, while 

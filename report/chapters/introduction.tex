@@ -10,7 +10,7 @@ This assignment, or any part of it, has not been previously submitted by
 me or any other person for assessment on this or any other course of study.}
 
 The goal of this project is to build a neural network to classify audio 
-files from the \emph{UrbanSound8k} dataset.
+files from the \emph{UrbanSound8k} dataset~\cite{dataset}.
 
 This dataset contains audio divided in ten classes, each one representing 
 a different type of city sound, for instance, we can find \emph{car horns}, 
@@ -19,18 +19,18 @@ the dataset is present in the Subsection \vref*{dataset-structure}.
 
 The presented methodology is composed of three main parts.
 The first step is to extract relevant features from audio files using the
-\emph{Librosa} library. This is discussed on Section 
+\emph{Librosa} library~\cite{librosa}.  This is discussed on Section 
 \vref*{feature-extraction}.\\
 The next step consists in composing and refining a neural network 
 to classify the data obtained from the previous step. This part is 
 made possible by the \emph{Keras} library and it is discussed in 
-Section \vref*{model-definition}.\\
+Section \vref*{model-definition}~\cite{keras}.\\
 Lastly, results from the classification, namely accuracy 
 and standard deviation among test sets, are presented in 
 Section \vref*{results}.
 
 The project is developed in \emph{Python} and the code is structured in 
-a \emph{src} package. Each one of the sub-packages contains code to deal 
+a \emph{src} package~\cite{python}. Each one of the sub-packages contains code to deal 
 with the different parts of the project. For instance, the \emph{data} folder 
 contains the classes to extract features and to manage a dataset.
 
