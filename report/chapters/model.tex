@@ -79,6 +79,9 @@ and the output one uses a \emph{Softmax}~\cite{relu} \cite{soft}.
 The loss used is the \emph{Sparse Categorical Crossentropy loss} as it is suited 
 for this kind of problems~\cite{entropy}.
 
+To build the actual model \emph{Tensorflow} and \emph{Keras} library 
+are used.~\cite{tensorflow}~\cite{keras}
+
 As discussed in the previous Section, models with this logic for 
 construction were tested on the four training sets to choose the one to tune 
 the final network on.
@@ -93,14 +96,17 @@ the results obtained on the training set.
 Note that all the random seeds used by Tensorflow were fixed 
 to make results reproducible.
 
+\paragraph{Class unbalance}
+\dots
+
 \paragraph{Cross validation}
 To estimate performance on the training set cross-validation with 
-5 folds was used. Basically the dataset is divided into five folds, 
+five folds was used. Basically the dataset is divided into five parts 
 and a model is repeatly trained on four and tested on one. 
-The mean accuracy on the testing folds gives a hint about the model performance.
+The mean accuracy on the test folds gives a hint about the model performance.
 
 \paragraph{Results}
-For each training set presented, a model was defined 
+For each training presented training set, a model was defined 
 with the structure presented at the beginning of this Section, 
 and these are the results:
 
@@ -117,22 +123,22 @@ and these are the results:
     \end{tabular}
 \end{center}
 
-There is a huge improvement after scaling the training set, after 
+There is a great improvement after scaling the training set, after 
 that small refinements were made.
 As accuracy is the best on the last dataset, this was the one selected to 
 perform the Hyperparameter tuning.
 
 \subsection{Hyperparameter tuning}
 
-Choosing the training set with PCA applied, led to the best results 
+Choosing the training set with PCA applied led to the best results 
 with cross validation, although the model was reasonable, it can not be the 
 final one, as many parameters were left on their default value, for instance, 
-learning rate and momentum of the optimizer were not touched. 
+learning rate and momentum of the optimizer were left untouched. 
 
 The main goal now is to experiments with different model parameters 
 to find the best one.
 
-\paragraph{Grid vs Random search}
+\paragraph{Grid and Random search comparison}
 Two of the most commonly used strategies in Hyperparameter optimization
 are \emph{Grid} and \emph{Random Search}~\cite{random-grid}. 
 

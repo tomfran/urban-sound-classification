@@ -60,11 +60,14 @@ The table shows the numerosity of the different sets.
     \end{tabular}
 \end{center}
 
+All the operations on the datasets are performed with \emph{Pandas} library.~\cite{pandas}
+
 \subsection{First dataset}
 Choosing the features to extract was challenging due to the inexperience working on audio files, thus some \emph{research} on what features to 
 choose was necessary~\cite{features}.
 
-The Librosa library provides many feature to choose from,
+To extract features from audio files \emph{Librosa} was used.~\cite{librosa}
+The library provides many feature to choose from,
 to keep it simple, for the first try with this dataset, the extracted features 
 are these three ones: 
 \begin{enumerate}
@@ -74,18 +77,26 @@ are these three ones:
 \end{enumerate}
 Each feature consists of an array of arrays containing measurements. 
 A series of functions were applied to each sub-array and results 
-were concatenated in a final feature vector~\cite{librosa-first}. 
+were concatenated in a final feature vector. 
 The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} 
 and \emph{median} from the \emph{Numpy} library~\cite{numpy}.
 
 This approach resulted in 132 components feature vectors.
+
+\paragraph{Parallelizing feature extraction}
+Extracting the three features listed above is really intensive 
+but the task is easily parallelizable, in fact, each file is independent 
+from one another.
+
+For this purpose \emph{Dask} was used to speed up the computation, and 
+extract features from audio files in a multi-threading fashion.~\cite{dask}
 
 \paragraph{Feature scaling}
 After testing some Neural Networks on the first dataset the results 
 were not promising. One of the reasons is the big difference in 
 ranges among feature vector components.
 
-To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} was applied~\cite{scaler}\cite{scikitlearn}.
+To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} was applied~\cite{scaler}.
 The result is a dataset where each feature has more or less a distribution 
 centered in zero with unit variance.
 This lead to an improvement on the results using the same
@@ -94,20 +105,26 @@ model as before.
 \subsection{Extended dataset}
 \label{extended-dataset}
 
-To improve results on the training set new features are added, namely: 
+Results using the three features named in the previous Subsection 
+are promising but not enough, thus, to improve results on the training set, 
+new audio characteristics are extracted, namely: 
 \begin{enumerate}
     \item \emph{Zero-crossing rate};
     \item \emph{Roll-off frequency};
     \item \emph{Spectral flux onset strength}.
 \end{enumerate}
-After applying the same four functions to these three new arrays, 
-a total of 12 new features are added to the dataset~\cite{librosa-ex}.
+As before, \emph{minimum}, \emph{maximum}, \emph{mean} 
+and \emph{median} are applyied to each feature vector and 
+results are concatenated, resulting in 12 new features for each 
+audio file.
+
 Scaling yield to promising results on the first dataset, 
-so the same approach is applied to the extended dataset.
+so the same approach is applied to the extended one.
 
-After testing a network on the new dataset results improved once again.
+After testing a network on the new training set 
+results improved once again.
 
-\paragraph{PCA}
+\paragraph{Feature selection}
 Adding new features can lead to better results 
 in the end but they all need to be useful to the model, so 
 the extended dataset was subject of some experiments with feature selection, 
