@@ -90,12 +90,12 @@ training sets obtained from the dataset and, without going into details,
 stated that there was continuous improvement. This subsection presents
 the results obtained on the training set. 
 
-Note that all the random seeds used by tensorflow were fixed 
+Note that all the random seeds used by Tensorflow were fixed 
 to make results reproducible.
 
 \paragraph{Cross validation}
-To estimate performance on the training set \emph{cross-validation} with 
-5 folds was used~\cite{cross}. Basically the dataset is divided into five folds, 
+To estimate performance on the training set cross-validation with 
+5 folds was used. Basically the dataset is divided into five folds, 
 and a model is repeatly trained on four and tested on one. 
 The mean accuracy on the testing folds gives a hint about the model performance.
 
@@ -127,7 +127,7 @@ perform the Hyperparameter tuning.
 Choosing the training set with PCA applied, led to the best results 
 with cross validation, although the model was reasonable, it can not be the 
 final one, as many parameters were left on their default value, for instance, 
-\emph{learning rate} and \emph{momentum} of the optimizer were not touched. 
+learning rate and momentum of the optimizer were not touched. 
 
 The main goal now is to experiments with different model parameters 
 to find the best one.
@@ -157,15 +157,15 @@ ranges to optimize the previously found model.
 \paragraph{Random search}
 Starting from the model introduced in the previous Subsection, parameters are 
 tweaked to find a better one.
-The optimizer used is the \emph{Stochastic Gradient Descent}~\cite{sgd}.
+The optimizer used is the Stochastic Gradient Descent.
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
     \item \emph{Neurons}: first and last layers stay the same, while 
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
     $$60 + 2i\;\;\text{and}\;\;25 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
-    \item \emph{Learning rate}: $0.001, 0.01, 0.1, 0.5$
-    \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$
+    \item \emph{Learning rate}: $0.001, 0.01, 0.1, 0.5$;
+    \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$.
 \end{enumerate}
 
 An early stopper is used on the fit with 100 \emph{epochs}, \emph{batch size} 
@@ -176,9 +176,9 @@ in total.
 
 The best model found was the following: 
 \begin{itemize}
-    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output 
-    \item \emph{Momentum}: 0.1
-    \item \emph{Learning rate}: 0.1
+    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output; 
+    \item \emph{Momentum}: 0.1;
+    \item \emph{Learning rate}: 0.1.
 \end{itemize}
 Comparing the initial model with the one found now, a small improvement 
 can be seen both in accuracy and standard deviation:
@@ -203,15 +203,15 @@ Parameters this time was:
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
     $$62 + i\;\;\text{and}\;\;27 + j,\;\;\text{with}\;\; i, j \in \{-1,0,1\}$$
-    \item \emph{Learning rate}: $0.08, 0.1, 0.12$
-    \item \emph{Momentum}: $0.08, 0.1, 0.12$
+    \item \emph{Learning rate}: $0.08, 0.1, 0.12$;
+    \item \emph{Momentum}: $0.08, 0.1, 0.12$.
 \end{enumerate}
 
 The total possible models was 81, the best found is the following:
 \begin{itemize}
-    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 28 for the second, and 10 for output 
-    \item \emph{Momentum}: 0.12
-    \item \emph{Learning rate}: 0.08
+    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 28 for the second, and 10 for output; 
+    \item \emph{Momentum}: 0.12;
+    \item \emph{Learning rate}: 0.08.
 \end{itemize}
 As before, a comparison shows that Grid Search fine tuned the model 
 to have better accuracy, unfortunately standard deviation increased by a small 
@@ -227,4 +227,5 @@ quantity:
         \hline
     \end{tabular}
 \end{center}
+This last model is the one selected to evaluate test set performances.
 \newpage

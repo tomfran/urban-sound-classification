@@ -1,7 +1,10 @@
-/data
+data/processed/extended/test*
+data/processed/extended/train*
+data/processed/initial/test*
+data/processed/initial/train*
+data/raw
 *dask*
 .vscode
-models
 notebooks/test*
 *references.txt
 

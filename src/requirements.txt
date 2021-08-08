@@ -1,0 +1,9 @@
+pandas==1.2.5
+numpy==1.19.5
+matplotlib==3.4.2
+tensorflow==2.5.0
+librosa==0.8.1
+dask==2021.7.0
+keras_nightly==2.5.0.dev2021032900
+keras==2.4.3
+scikit_learn==0.24.2

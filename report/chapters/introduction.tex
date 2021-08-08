@@ -15,26 +15,38 @@ files from the \emph{UrbanSound8k} dataset~\cite{dataset}.
 This dataset contains audio divided in ten classes, each one representing 
 a different type of city sound, for instance, we can find \emph{car horns}, 
 \emph{dogs barking}, \emph{sirens}, etc. A deeper discussion about 
-the dataset is present in the Subsection \vref*{dataset-structure}.
+the dataset is made at Subsection \vref*{dataset-structure}.
 
 The presented methodology is composed of three main parts.
-The first step is to extract relevant features from audio files using the
-\emph{Librosa} library~\cite{librosa}.  This is discussed on Section 
-\vref*{feature-extraction}.\\
+The first step is to extract relevant features from audio files, 
+this is discussed on Section \vref*{feature-extraction}.\\
 The next step consists in composing and refining a neural network 
-to classify the data obtained from the previous step. This part is 
-made possible by the \emph{Keras} library and it is discussed in 
-Section \vref*{model-definition}~\cite{keras}.\\
+to classify the data obtained from the previous step. This part is
+discussed in Section \vref*{model-definition}.\\
 Lastly, results from the classification, namely accuracy 
 and standard deviation among test sets, are presented in 
 Section \vref*{results}.
 
-The project is developed in \emph{Python} and the code is structured in 
-a \emph{src} package~\cite{python}. Each one of the sub-packages contains code to deal 
-with the different parts of the project. For instance, the \emph{data} folder 
-contains the classes to extract features and to manage a dataset.
+\paragraph{Implementation details}
+The project is developed in \emph{Python} and some useful packages were used, 
+in particular \emph{Librosa} and \emph{Dask} to extract features from audio files and 
+\emph{TensorFlow} and \emph{Keras} to build the Neural Network.~\cite{python}~\cite{librosa}~\cite{dask}~\cite{tensorflow}~\cite{keras}
+Other libraries were used to complete some minor tasks, they are named in 
+the following Sections.
 
-In addition to the package there is a \emph{notebook} folder containing
-the different steps of the project and the various experiments made.
-
+The project folder is structured as follows:
+\begin{itemize}
+    \item \emph{src}: this contains the source code for the
+    project. Each sub-folder contains code for a specific part of the 
+    processing. In particular, the \emph{data} folder holds classes to 
+    extract features and to manage the dataset, the \emph{model} folder
+    contains the class to create the Neural Network, then \emph{utils} 
+    stores utility functions to measure performances;
+    \item \emph{data}: here data is stored, there is a \emph{processed}
+    and \emph{raw} sub-folders, where the first stores computed datasets 
+    and the second original data;
+    \item \emph{models}: trained models are saved here;
+    \item \emph{notebooks}: the folder contains the Jupyter notebooks 
+    used in the project, where code from src is practically used.
+\end{itemize}
 \newpage

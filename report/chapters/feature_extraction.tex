@@ -5,11 +5,12 @@ This Sections presents the original dataset structure and the
 steps followed to create training and test sets from it.
 
 Note that the models mentioned in this section are
-three layers networks with a reasonable number of neurons, trained 
-for 100 epochs with default parameters for the Stochastic Gradient 
-Descent optimizer. 
-The accuracy on the training is computed with a cross validation 
-approach.
+three layers \emph{multilayer perceptron} a reasonable number of neurons, trained 
+for 100 epochs with default parameters for the \emph{Stochastic Gradient 
+Descent optimizer}.~\cite{mlp}~\cite{sgd}
+
+The accuracy on the training is computed with a \emph{cross-validation} 
+approach.~\cite{cross}
 Details about models and validation techniques used in 
 the project can be found at Section \vref{model-definition}.
 
@@ -60,33 +61,34 @@ The table shows the numerosity of the different sets.
 \end{center}
 
 \subsection{First dataset}
-Choosing the features to extract was challenging due to the inexperience
-with working on audio files, thus some research on what features to 
-choose was necessary~\cite{features}.  
+Choosing the features to extract was challenging due to the inexperience working on audio files, thus some \emph{research} on what features to 
+choose was necessary~\cite{features}.
 
 The Librosa library provides many feature to choose from,
 to keep it simple, for the first try with this dataset, the extracted features 
 are these three ones: 
 \begin{enumerate}
-    \item \emph{Mel-frequency cepstral coefficients}
-    \item \emph{Chromagram}
-    \item \emph{Root-mean-square}
+    \item \emph{Mel-frequency cepstral coefficients};
+    \item \emph{Chromagram};
+    \item \emph{Root-mean-square}.
 \end{enumerate}
 Each feature consists of an array of arrays containing measurements. 
 A series of functions were applied to each sub-array and results 
 were concatenated in a final feature vector~\cite{librosa-first}. 
 The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} 
-and \emph{median}.
+and \emph{median} from the \emph{Numpy} library~\cite{numpy}.
 
 This approach resulted in 132 components feature vectors.
 
 \paragraph{Feature scaling}
-After testing some neural networks on the first dataset the results 
+After testing some Neural Networks on the first dataset the results 
 were not promising. One of the reasons is the big difference in 
 ranges among feature vector components.
 
-To mitigate this effect a \emph{StandardScaler} from \emph{sklearn} was applied~\cite{scaler}\cite{scikitlearn}.
-This lead to an improvement on the results using the same 
+To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} was applied~\cite{scaler}\cite{scikitlearn}.
+The result is a dataset where each feature has more or less a distribution 
+centered in zero with unit variance.
+This lead to an improvement on the results using the same
 model as before. 
 
 \subsection{Extended dataset}
@@ -94,9 +96,9 @@ model as before.
 
 To improve results on the training set new features are added, namely: 
 \begin{enumerate}
-    \item \emph{Zero-crossing rate}
-    \item \emph{Roll-off frequency}
-    \item \emph{Spectral flux onset strength}
+    \item \emph{Zero-crossing rate};
+    \item \emph{Roll-off frequency};
+    \item \emph{Spectral flux onset strength}.
 \end{enumerate}
 After applying the same four functions to these three new arrays, 
 a total of 12 new features are added to the dataset~\cite{librosa-ex}.
@@ -109,10 +111,14 @@ After testing a network on the new dataset results improved once again.
 Adding new features can lead to better results 
 in the end but they all need to be useful to the model, so 
 the extended dataset was subject of some experiments with feature selection, 
-in particular \emph{PCA} algorithm from sklearn was applied~\cite{pca}.
+in particular \emph{PCA} algorithm from scikit learn was applied~\cite{pca}.
 
-After some experiments with the number of features to select, 120 out of 144 
-features were selected. This led to a small improvement on the training set, 
-so this final reduced dataset was selected to perform hyperparameter tuning.
+The main idea is to select a reduced number of features from the total, 
+without loosing information. This approach often leads to better results, 
+as useless features are discarded.
+
+After some experiments with the number of features to select, 120 out of 144
+ were selected. This led to a small improvement on the training set, 
+so this final reduced dataset is chosen to perform hyperparameter tuning.
 
 \newpage
