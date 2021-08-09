@@ -1,13 +1,18 @@
 import tensorflow
 from tensorflow import keras
 from tensorflow.keras import layers
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, StratifiedKFold
+from sklearn.utils import class_weight
 from keras.wrappers.scikit_learn import KerasClassifier
 from ..data import Dataset
 from keras.callbacks import EarlyStopping
+import numpy as np
 from numpy.random import seed
 seed(1)
 tensorflow.random.set_seed(1)
+
+import warnings  
+warnings.filterwarnings("ignore",category=FutureWarning)
 
 class NeuralNetwork:
     
@@ -46,7 +51,8 @@ class NeuralNetwork:
                                   n_jobs=-1, 
                                   scoring="accuracy",
                                   error_score="raise", 
-                                  verbose=2)
+                                  verbose=2, 
+                                  cv=StratifiedKFold(n_splits=5))
             
         elif method == "random":
             search = RandomizedSearchCV(estimator=model, 
@@ -56,11 +62,15 @@ class NeuralNetwork:
                                         n_jobs=-1, 
                                         error_score="raise", 
                                         verbose=2, 
-                                        random_state=1)
+                                        random_state=1, 
+                                        cv=StratifiedKFold(n_splits=5))
             
         stopper = EarlyStopping(monitor='accuracy', patience=3, verbose=0)
 
         fit_params = dict(callbacks=[stopper])
         
-        results = search.fit(x_train, y_train, **fit_params)
+        class_weights = class_weight.compute_class_weight('balanced', np.unique(y_train), y_train)
+        weights_dict = dict(zip(np.unique(y_train), class_weights))
+        
+        results = search.fit(x_train, y_train, class_weight=weights_dict, **fit_params)
         return results

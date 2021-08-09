@@ -1,7 +1,7 @@
 \section{Model definition}
 \label{model-definition}
-This Section presents how the networks used on the training set are 
-structured, the second Subsection gives an overview of the performances 
+This Section starts by presenting how the networks used on the training set are 
+structured. The second Subsection gives an overview of the performances 
 on the different training sets, lastly, the Hyperparameter tuning phase
 is described.
 
@@ -9,16 +9,15 @@ is described.
 The starting point for the neural network structure was a 
 reasonable network in terms of hidden neurons to prevent over-fitting, 
 indeed a high number of units in the hidden layers would end up in learning 
-too much from the dataset.
+too much from the dataset, leading to poor performances on the test sets.
 
-The rule of thumb followed to decide hidden neurons quantity is the 
+For this reason, the rule of thumb followed to decide hidden neurons quantity is the 
 following: 
 $$\#\mathit{hidden\; neurons} = \frac{2}{3}\#\mathit{input\;neurons}
 + \#\mathit{output\;neurons}$$
-The next step was to decide the hidden layer number. To respect the 
+The next step is to decide the hidden layer number. To respect the 
 number of hidden neurons, two hidden layers were considered. 
-A more complex structure in terms of layers number would mean 
-having a real small number of neurons per layer.
+A higher number of layers would mean having a real small number of neurons per layer.
 
 To give reference, this is the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
@@ -75,9 +74,10 @@ the end of Subsection \vref{extended-dataset}, with
 \end{center}
 
 The activation function for the input and hidden layers is a \emph{Relu} 
-and the output one uses a \emph{Softmax}~\cite{relu} \cite{soft}. 
+and the output one uses a \emph{Softmax} to have classification probabilities
+among classes.~\cite{relu} \cite{soft} \\
 The loss used is the \emph{Sparse Categorical Crossentropy loss} as it is suited 
-for this kind of problems~\cite{entropy}.
+for this kind of problems.~\cite{entropy}
 
 To build the actual model \emph{Tensorflow} and \emph{Keras} library 
 are used.~\cite{tensorflow}~\cite{keras}
@@ -90,23 +90,55 @@ the final network on.
 
 Section \vref{feature-extraction} talked about the four different 
 training sets obtained from the dataset and, without going into details, 
-stated that there was continuous improvement. This subsection presents
-the results obtained on the training set. 
+stated that there was continuous improvement. 
+We now give a more detailed look on training performance.
 
 Note that all the random seeds used by Tensorflow were fixed 
 to make results reproducible.
 
-\paragraph{Class unbalance}
-\dots
+\paragraph{Class imbalance}
+To deal with the minority of some classes, balancing techniques should be 
+applied when fitting the model. One of the possible approaches, and the one followed
+here, is to assign class weights. 
 
-\paragraph{Cross validation}
-To estimate performance on the training set cross-validation with 
+The main idea is to penalize errors made on not well represented classes, to account 
+for their minority. To compute class weights, the \emph{compute class weights} function
+from sklearn was used.~\cite{classweight}
+
+The following are the computed quantities for the dataset classes:
+\begin{center}
+    \begin{tabular}{ |l|c|c| } 
+        \hline
+        Class name & Number of samples & Class weight \\
+        \hline
+        air conditioner & 500 & 0.8998 \\
+        car horn & 208 & 2.1629 \\
+        children playing & 500 & 0.8998 \\
+        dog bark & 500 & 0.8998 \\
+        drilling & 500 & 0.8998 \\
+        engine idling & 517 & 0.8702 \\
+        gun shot & 190 & 2.3678 \\
+        jackhammer & 548 & 0.8209 \\
+        siren & 536 & 0.8393 \\
+        street music & 500 & 0.8998 \\
+        \hline
+    \end{tabular}
+\end{center}
+As expected, the less numerous classes have higher class weight than the rest.
+
+\paragraph{Stratified cross-validation}
+To estimate performance on the training set stratified cross-validation with 
 five folds was used. Basically the dataset is divided into five parts 
-and a model is repeatly trained on four and tested on one. 
+and a model is repeatly trained on four and tested on one, all while considering class 
+distribution, indeed, the original distribution of the classes is maintained 
+in the splits.~\cite{stratified}
+
+The stratified approach is required, as there is class imbalance on the training set. 
 The mean accuracy on the test folds gives a hint about the model performance.
+For this step the \emph{Stratified KFold} class from scikit learn was used.~\cite{cross-scikit}
 
 \paragraph{Results}
-For each training presented training set, a model was defined 
+For each presented training set, a model was defined 
 with the structure presented at the beginning of this Section, 
 and these are the results:
 
@@ -115,10 +147,10 @@ and these are the results:
         \hline
         Training set & Mean accuracy & St. deviation \\
         \hline
-        132 features unscaled &  0.0669 & 0.0488 \\
-        132 features scaled &  0.5201 & 0.0668 \\
-        144 features scaled &  0.5586 & 0.0842 \\
-        120 features reduced with PCA &  0.5608 & 0.0998 \\
+        132 features unscaled &  0.1138 & 0.0039 \\
+        132 features scaled &  0.5743 & 0.0324 \\
+        144 features scaled &  0.6079 & 0.0486 \\
+        120 features reduced with PCA &  0.6143 & 0.0481 \\
         \hline
     \end{tabular}
 \end{center}
@@ -131,7 +163,7 @@ perform the Hyperparameter tuning.
 \subsection{Hyperparameter tuning}
 
 Choosing the training set with PCA applied led to the best results 
-with cross validation, although the model was reasonable, it can not be the 
+with cross validation. Although the model was reasonable, it can not be the 
 final one, as many parameters were left on their default value, for instance, 
 learning rate and momentum of the optimizer were left untouched. 
 
@@ -156,13 +188,12 @@ than going the random route.
 Nonetheless the Grid Search can led to over-fitting, and in practice Random 
 Search in preferred.
 
-To get the best out of the two techniques, a first Random Search is performed 
-on a larger parameter space, then, a Grid Search is used on much smaller 
-ranges to optimize the previously found model.
-
 \paragraph{Random search}
 Starting from the model introduced in the previous Subsection, parameters are 
 tweaked to find a better one.
+
+Note that class weights are still considered and the models are evaluated
+again with a stratified cross-validation.
 The optimizer used is the Stochastic Gradient Descent.
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
@@ -176,62 +207,29 @@ The considered ranges for parameters for this run are:
 
 An early stopper is used on the fit with 100 \emph{epochs}, \emph{batch size} 
 is fixed at 
-32, and cross validation with 5 folds is performed on each combination.
+32.
 The total possible models are 400, but the search was performed with 100 iterations
 in total.
 
-The best model found was the following: 
+The best model found is the following: 
 \begin{itemize}
     \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output; 
-    \item \emph{Momentum}: 0.1;
+    \item \emph{Momentum}: 0.0;
     \item \emph{Learning rate}: 0.1.
 \end{itemize}
 Comparing the initial model with the one found now, a small improvement 
-can be seen both in accuracy and standard deviation:
+can be seen in accuracy despite a worse standard deviation:
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
         Model & Mean accuracy & St. deviation \\
         \hline
-        Initial model & 0.5608& 0.0998\\
-        Random search result & 0.5857 & 0.0715 \\
+        Initial model & 0.6143 & 0.0481\\
+        Random search result & 0.6297 & 0.0530 \\
         \hline
     \end{tabular}
 \end{center}
 
-\paragraph{Grid search}
-The best model from the random search was then fine-tuned with a Grid Search, 
-where ranges are in the proximity of the parameters found by the previous search.
-
-Parameters this time was:
-\begin{enumerate}
-    \item \emph{Neurons}: first and last layer stay the same, while 
-    the two hidden layers are tested with a number of neurons respectively 
-    equals to: 
-    $$62 + i\;\;\text{and}\;\;27 + j,\;\;\text{with}\;\; i, j \in \{-1,0,1\}$$
-    \item \emph{Learning rate}: $0.08, 0.1, 0.12$;
-    \item \emph{Momentum}: $0.08, 0.1, 0.12$.
-\end{enumerate}
-
-The total possible models was 81, the best found is the following:
-\begin{itemize}
-    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 28 for the second, and 10 for output; 
-    \item \emph{Momentum}: 0.12;
-    \item \emph{Learning rate}: 0.08.
-\end{itemize}
-As before, a comparison shows that Grid Search fine tuned the model 
-to have better accuracy, unfortunately standard deviation increased by a small 
-quantity:
-\begin{center}
-    \begin{tabular}{ |l|r|r| } 
-        \hline
-        Model & Mean accuracy & St. deviation \\
-        \hline
-        Initial model & 0.5608& 0.0998\\
-        Random search result & 0.5857 & 0.0715 \\
-        Grid search result & 0.5877 & 0.0763 \\
-        \hline
-    \end{tabular}
-\end{center}
-This last model is the one selected to evaluate test set performances.
+This is the final model found, therefore it is the one
+evaluated on the test sets.
 \newpage

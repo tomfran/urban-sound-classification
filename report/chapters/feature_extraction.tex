@@ -5,7 +5,7 @@ This Sections presents the original dataset structure and the
 steps followed to create training and test sets from it.
 
 Note that the models mentioned in this section are
-three layers \emph{multilayer perceptron} a reasonable number of neurons, trained 
+three layers \emph{multilayer perceptron} with a reasonable number of neurons, trained 
 for 100 epochs with default parameters for the \emph{Stochastic Gradient 
 Descent optimizer}.~\cite{mlp}~\cite{sgd}
 
@@ -18,32 +18,40 @@ the project can be found at Section \vref{model-definition}.
 \label{dataset-structure}
 
 The dataset contains ten folds of audio samples, each one about 
-four seconds long. The samples are divided in ten classes among ten 
-folds. The following table shows the classes and their relative frequency 
-in the dataset.
+four seconds long. The samples are divided in ten classes. 
+
+From the total of ten folds, the number one, two, three, four and six 
+are taken as a training set, the others are each one a test set.
+For this reason the following count about class numerosity considers
+only the five training folds.
 
 \begin{center}
     \begin{tabular}{ |l|c| } 
         \hline
         Class name & Number of samples \\
         \hline
-        air conditioner & 1000 \\
-        car horn & 429 \\
-        children playing & 1000 \\
-        dog bark & 1000 \\
-        drilling & 1000 \\
-        engine idling & 1000 \\
-        gun shot & 374 \\
-        jackhammer & 1000 \\
-        siren & 929 \\
-        street music & 1000 \\
+        air conditioner & 500 \\
+        car horn & 208 \\
+        children playing & 500 \\
+        dog bark & 500 \\
+        drilling & 500 \\
+        engine idling & 517 \\
+        gun shot & 190 \\
+        jackhammer & 548 \\
+        siren & 536 \\
+        street music & 500 \\
         \hline
     \end{tabular}
 \end{center}
 
-The training set consists of the first four folds plus the sixth, 
-the other folds create five different test sets.
-The table shows the numerosity of the different sets.
+The table shows a clear class imbalance. In particular, the classes 
+\emph{car horn} and \emph{gun shot} are not as numerous as the others. 
+This can lead to poor performances on the these two categories, it is
+therefore taken 
+into consideration with training. 
+
+The following table shows the number of samples in the training set and 
+the various test sets.
 
 \begin{center}
     \begin{tabular}{ |l|c| } 
@@ -66,8 +74,8 @@ All the operations on the datasets are performed with \emph{Pandas} library.~\ci
 Choosing the features to extract was challenging due to the inexperience working on audio files, thus some \emph{research} on what features to 
 choose was necessary~\cite{features}.
 
-To extract features from audio files \emph{Librosa} was used.~\cite{librosa}
-The library provides many feature to choose from,
+To extract information from audio files \emph{Librosa} was used.~\cite{librosa}
+The library provides many methods to choose from,
 to keep it simple, for the first try with this dataset, the extracted features 
 are these three ones: 
 \begin{enumerate}
@@ -89,7 +97,7 @@ but the task is easily parallelizable, in fact, each file is independent
 from one another.
 
 For this purpose \emph{Dask} was used to speed up the computation, and 
-extract features from audio files in a multi-threading fashion.~\cite{dask}
+extract features from audio files in a multi-processing fashion.~\cite{dask}
 
 \paragraph{Feature scaling}
 After testing some Neural Networks on the first dataset the results 
@@ -117,7 +125,6 @@ As before, \emph{minimum}, \emph{maximum}, \emph{mean}
 and \emph{median} are applyied to each feature vector and 
 results are concatenated, resulting in 12 new features for each 
 audio file.
-
 Scaling yield to promising results on the first dataset, 
 so the same approach is applied to the extended one.
 
@@ -135,7 +142,6 @@ without loosing information. This approach often leads to better results,
 as useless features are discarded.
 
 After some experiments with the number of features to select, 120 out of 144
- were selected. This led to a small improvement on the training set, 
-so this final reduced dataset is chosen to perform hyperparameter tuning.
+ were selected. This led to a small improvement on the training set.
 
 \newpage
