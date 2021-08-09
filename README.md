@@ -1,7 +1,7 @@
 # Urban sound classification
 
 The goal of the project is to build a neural network capable of classification on the [Urban Sound 8k dataset](https://urbansounddataset.weebly.com/urbansound8k.html).
-
+A detailed discussion about the methodology followed can be found on the [project report](https://github.com/tomfran/urban-sound-classification/blob/main/report/report.pdf).
 
 ## Requirements
 Libraries used in the project are the following:
