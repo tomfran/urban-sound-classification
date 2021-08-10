@@ -19,6 +19,10 @@ The next step is to decide the hidden layer number. To respect the
 number of hidden neurons, two hidden layers were considered. 
 A higher number of layers would mean having a real small number of neurons per layer.
 
+To build the actual model \emph{Tensorflow} and \emph{Keras} library 
+are used.~\cite{tensorflow}~\cite{keras}
+
+\paragraph{Starting point model}
 To give reference, this is the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
 120 input features.
@@ -73,18 +77,25 @@ the end of Subsection \vref{extended-dataset}, with
     \end{tikzpicture}
 \end{center}
 
-The activation function for the input and hidden layers is a \emph{Relu} 
+\paragraph{Activation and loss functions}
+The activation function for the input and hidden layers is a \emph{Relu}, 
+to prevent \emph{vanishing gradient problem}, 
 and the output one uses a \emph{Softmax} to have classification probabilities
-among classes.~\cite{relu} \cite{soft} \\
-The loss used is the \emph{Sparse Categorical Crossentropy loss} as it is suited 
-for this kind of problems.~\cite{entropy}
+among classes.~\cite{relu}\cite{soft}\cite{vanishing}
+The loss used is the \emph{Sparse Categorical Crossentropy loss} as it 
+is well suited for multiclass classification and, since 
+the classes are integers and not one-hot encoded, the sparse version is preferred.~\cite{entropy}
 
-To build the actual model \emph{Tensorflow} and \emph{Keras} library 
-are used.~\cite{tensorflow}~\cite{keras}
+\paragraph{Choosing an optimizer}
+When choosing an optimizer for a Neural Network one must take into account the 
+cost of reaching a minimum point on the error function.
+Although more complex optimizers exists, build to reduce training 
+cost on deep networks or to reach a minimum point in less steps, the one choosen 
+for this model is a classic Stochastic Gradient Descent optimizer.
 
-As discussed in the previous Section, models with this logic for 
-construction were tested on the four training sets to choose the one to tune 
-the final network on.
+Testing some more advanced optimizers shows that convergence is reached faster on the 
+networks used in the experiments, but the speed increase is negligible as the model
+is quite small.
 
 \subsection{Initial training set results}
 
@@ -94,7 +105,8 @@ stated that there was continuous improvement.
 We now give a more detailed look on training performance.
 
 Note that all the random seeds used by Tensorflow were fixed 
-to make results reproducible.
+to make results reproducible. This step is necessary as many parameters initial 
+state are random, for instance, the Neural Network weights.
 
 \paragraph{Class imbalance}
 To deal with the minority of some classes, balancing techniques should be 
@@ -124,7 +136,9 @@ The following are the computed quantities for the dataset classes:
         \hline
     \end{tabular}
 \end{center}
-As expected, the less numerous classes have higher class weight than the rest.
+As expected, the less numerous classes have higher class weight than the rest. 
+In particular, the misclassification of a car horn class sample
+counts almost 2.5 times more than an air conditioner one.
 
 \paragraph{Stratified cross-validation}
 To estimate performance on the training set stratified cross-validation with 
@@ -133,7 +147,12 @@ and a model is repeatly trained on four and tested on one, all while considering
 distribution, indeed, the original distribution of the classes is maintained 
 in the splits.~\cite{stratified}
 
-The stratified approach is required, as there is class imbalance on the training set. 
+The stratified approach is required as there is class imbalance on the training set.
+In fact, applying a classical cross-validation could show misleading results, 
+for instance when the minority classes are more present 
+in the test fold rather than the training ones; in such cases the loss would be 
+higher.
+
 The mean accuracy on the test folds gives a hint about the model performance.
 For this step the \emph{Stratified KFold} class from scikit learn was used.~\cite{cross-scikit}
 
@@ -163,12 +182,12 @@ perform the Hyperparameter tuning.
 \subsection{Hyperparameter tuning}
 
 Choosing the training set with PCA applied led to the best results 
-with cross validation. Although the model was reasonable, it can not be the 
-final one, as many parameters were left on their default value, for instance, 
-learning rate and momentum of the optimizer were left untouched. 
+with stratified cross-validation. Although the model was reasonable, 
+it can not be the final one, as many parameters are left on their default value, 
+for instance, learning rate and momentum of the optimizer are untouched. 
 
-The main goal now is to experiments with different model parameters 
-to find the best one.
+The main goal now is to experiments with ranges of model parameters 
+to find a better one.
 
 \paragraph{Grid and Random search comparison}
 Two of the most commonly used strategies in Hyperparameter optimization
@@ -189,9 +208,8 @@ Nonetheless the Grid Search can led to over-fitting, and in practice Random
 Search in preferred.
 
 \paragraph{Random search}
-Starting from the model introduced in the previous Subsection, parameters are 
-tweaked to find a better one.
-
+We now run a Random Search with various model parameters 
+to optimize the initial model.
 Note that class weights are still considered and the models are evaluated
 again with a stratified cross-validation.
 The optimizer used is the Stochastic Gradient Descent.
@@ -205,12 +223,13 @@ The considered ranges for parameters for this run are:
     \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$.
 \end{enumerate}
 
-An early stopper is used on the fit with 100 \emph{epochs}, \emph{batch size} 
-is fixed at 
-32.
+The models are fitted with 100 \emph{epochs} and \emph{batch size} equals to 32.
+An early stopped is used on the training to stop it when no progress is made with 
+respect to the last epoch results.
 The total possible models are 400, but the search was performed with 100 iterations
 in total.
 
+\paragraph{Final model}
 The best model found is the following: 
 \begin{itemize}
     \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output; 
@@ -229,7 +248,5 @@ can be seen in accuracy despite a worse standard deviation:
         \hline
     \end{tabular}
 \end{center}
-
-This is the final model found, therefore it is the one
-evaluated on the test sets.
+This model is the one chosen to evaluate performance on the test sets.
 \newpage
