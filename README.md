@@ -1,6 +1,7 @@
 # Urban sound classification
 
-The goal of the project is to build a neural network capable of classification on the [Urban Sound 8k dataset](https://urbansounddataset.weebly.com/urbansound8k.html).
+The goal of the project is to build a neural network capable of classification on the [Urban Sound 8k dataset](https://urbansounddataset.weebly.com/urbansound8k.html).<br>
+An in depth overview of the project is present on the [project report](https://github.com/tomfran/urban-sound-classification/blob/main/report/report.pdf).
 
 ## Project structure
 The project folder is structured as follows:
@@ -22,15 +23,11 @@ pip install -r src/requirements.txt
 
 ## Methodology
 The methodology followed in the project can be seen in the various jupyter notebooks.
-An in depth overview of the project is present on the [project report](https://github.com/tomfran/urban-sound-classification/blob/main/report/report.pdf).
-
 
 ### Feature extraction and dataset creation
 In the [first notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/01_dataset.ipynb) audio features are extracted using Librosa library and scaling 
-is applied on the features. 
-
-In the [second notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/02_dataset_extended.ipynb), more features are extracted and PCA feature selection is exploited to 
-reduce the dataset dimensionality.
+is applied. <br>
+In the [second notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/02_dataset_extended.ipynb), more features are extracted and PCA feature selection is exploited to reduce the dataset dimensionality.
 
 ### Cross validation on the training sets
 To understand what training set is best suited for the project, 
