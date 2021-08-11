@@ -78,7 +78,7 @@ Extracting features from audio files is not straightforward, nonetheless there
 are a collection of features that are commonly used in audio machine learning 
 applications.~\cite{features}.
 
-To extract information from audio files \emph{Librosa} was used.~\cite{librosa}
+To extract information from audio files \emph{Librosa} is used.~\cite{librosa}
 The library provides many methods to choose from,
 to keep it simple, for the first try with this dataset, the extracted features 
 are these three ones: 
@@ -100,25 +100,27 @@ Extracting the three features listed above is really intensive
 but the task is easily parallelizable, in fact, each file is independent 
 from one another.
 
-For this purpose \emph{Dask} was used to speed up the computation, and 
+For this purpose \emph{Dask} is used to speed up the computation, and 
 extract features from audio files in a multi-processing fashion.~\cite{dask}
+The main idea is to build an execution plan, where each audio file 
+is managed in parallel by a collection of workers.
 
 \paragraph{Feature scaling}
-After testing some Neural Networks on the first dataset the results 
-were not promising. One of the reasons is the big difference in 
+After testing some Neural Networks on the first dataset results 
+are not promising. One of the reasons is the big difference in 
 ranges among feature vector components.
 
-To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} was applied~\cite{scaler}.
+To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} is applied~\cite{scaler}.
 The result is a dataset where each feature has more or less a distribution 
 centered in zero with unit variance.
-This lead to an improvement on the results using the same
+This leads to an improvement on the results using the same
 model as before. 
 
 \subsection{Extended dataset}
 \label{extended-dataset}
 
 Results using the three features named in the previous Subsection 
-are promising but not enough, thus, to improve results on the training set, 
+are promising but not enough, thus, to improve accuracy on the training set, 
 new audio characteristics are extracted, namely: 
 \begin{enumerate}
     \item \emph{Zero-crossing rate};
@@ -146,6 +148,6 @@ without loosing information. This approach often leads to better results,
 as useless features are discarded.
 
 After some experiments with the number of features to select, 120 out of 144
- were selected. This led to a small improvement on the training set.
+are selected. This lead to a small improvement on the training set.
 
 \newpage

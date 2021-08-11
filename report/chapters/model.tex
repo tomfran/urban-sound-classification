@@ -6,7 +6,7 @@ on the different training sets, lastly, the Hyperparameter tuning phase
 is described.
 
 \subsection{Neural network structure}
-The starting point for the neural network structure was a 
+The starting point for the neural network structure is a 
 reasonable network in terms of hidden neurons to prevent over-fitting, 
 indeed a high number of units in the hidden layers would end up in learning 
 too much from the dataset, leading to poor performances on the test sets.
@@ -27,9 +27,12 @@ To give reference, this is the model used on the PCA training set, mentioned at
 the end of Subsection \vref{extended-dataset}, with 
 120 input features.
 
+As the last dataset is the one where accuracy is the highest, this is 
+also the starting point architecture for parameters optimization.
+
 \begin{center}
     
-    \begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
+    \begin{tikzpicture}[x=1.5cm, y=1.3cm, >=stealth]
         
         % layers
         \foreach \m/\l [count=\y] in {1,2,3,missing,4}
@@ -90,7 +93,7 @@ the classes are integers and not one-hot encoded, the sparse version is preferre
 When choosing an optimizer for a Neural Network one must take into account the 
 cost of reaching a minimum point on the error function.
 Although more complex optimizers exists, build to reduce training 
-cost on deep networks or to reach a minimum point in less steps, the one choosen 
+cost or achieve better performances on deep networks, the one choosen 
 for this model is a classic Stochastic Gradient Descent optimizer.
 
 Testing some more advanced optimizers shows that convergence is reached faster on the 
@@ -99,12 +102,13 @@ is quite small.
 
 \subsection{Initial training set results}
 
-Section \vref{feature-extraction} talked about the four different 
+Section \vref{feature-extraction} talks about the four different 
 training sets obtained from the dataset and, without going into details, 
-stated that there was continuous improvement. 
-We now give a more detailed look on training performance.
+states that there is continuous improvement. 
+We now give a more detailed look on training performances, after 
+detailing how class imbalance is faced and the applied validation method.
 
-Note that all the random seeds used by Tensorflow were fixed 
+Note that all the random seeds used by Tensorflow are fixed 
 to make results reproducible. This step is necessary as many parameters initial 
 state are random, for instance, the Neural Network weights.
 
@@ -142,7 +146,7 @@ counts almost 2.5 times more than an air conditioner one.
 
 \paragraph{Stratified cross-validation}
 To estimate performance on the training set stratified cross-validation with 
-five folds was used. Basically the dataset is divided into five parts 
+five folds is used. Basically the dataset is divided into five parts 
 and a model is repeatly trained on four and tested on one, all while considering class 
 distribution, indeed, the original distribution of the classes is maintained 
 in the splits.~\cite{stratified}
@@ -157,7 +161,7 @@ The mean accuracy on the test folds gives a hint about the model performance.
 For this step the \emph{Stratified KFold} class from scikit learn was used.~\cite{cross-scikit}
 
 \paragraph{Results}
-For each presented training set, a model was defined 
+For each presented training set, a model is defined 
 with the structure presented at the beginning of this Section, 
 and these are the results:
 
@@ -181,8 +185,8 @@ perform the Hyperparameter tuning.
 
 \subsection{Hyperparameter tuning}
 
-Choosing the training set with PCA applied led to the best results 
-with stratified cross-validation. Although the model was reasonable, 
+Choosing the training set with PCA applied lead to the best results 
+with stratified cross-validation. Although the model is reasonable, 
 it can not be the final one, as many parameters are left on their default value, 
 for instance, learning rate and momentum of the optimizer are untouched. 
 
@@ -213,6 +217,7 @@ to optimize the initial model.
 Note that class weights are still considered and the models are evaluated
 again with a stratified cross-validation.
 The optimizer used is the Stochastic Gradient Descent.
+
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
     \item \emph{Neurons}: first and last layers stay the same, while 
@@ -224,9 +229,12 @@ The considered ranges for parameters for this run are:
 \end{enumerate}
 
 The models are fitted with 100 \emph{epochs} and \emph{batch size} equals to 32.
+The two last parameters are fixed as, after various runs with the random 
+search, giving them a range seems to not bring any relevant 
+improvement to the model found.
 An early stopped is used on the training to stop it when no progress is made with 
 respect to the last epoch results.
-The total possible models are 400, but the search was performed with 100 iterations
+The total possible models are 400, but the search is performed with 100 iterations
 in total.
 
 \paragraph{Final model}
