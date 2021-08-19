@@ -6,7 +6,7 @@ steps followed to create training and test sets from it.
 
 Note that the models mentioned in this section are
 three layers \emph{multilayer perceptron}, 
-so a feed forward neural network where each layers 
+a feed forward neural network where each layer 
 is densely connected  to the following, 
 with a reasonable number of neurons, trained 
 for 100 epochs with default parameters for the \emph{Stochastic Gradient 
@@ -19,7 +19,7 @@ techniques used in the project can be found at Section \vref{model-definition}.
 \subsection{Dataset structure}
 \label{dataset-structure}
 
-The dataset contains ten folds of audio samples, each one about 
+The UrbanSound8k dataset contains ten folds of audio samples, each one about 
 four seconds long. The samples are divided in ten classes.\\
 From the total of ten folds, the number one, two, three, four and six 
 are taken as a training set, the others are each one a test set.
@@ -97,15 +97,19 @@ Extracting the three features listed above is really intensive
 but the task is easily parallelizable, in fact, each file is independent 
 from one another.
 
-For this purpose \emph{Dask} is used to speed up the computation, and 
+For this purpose \emph{Dask} is used to speed up the computation and 
 extract features from audio files in a multi-processing fashion.~\cite{dask}
 The main idea is to build an execution plan, where each audio file 
-is managed in parallel by a collection of workers.
+is managed in parallel by a collection of workers. 
+Improvement is great as the time to process a single fold 
+is cutted into a third.
 
 \paragraph{Feature scaling}
 After testing some Neural Networks on the first dataset results 
 are not promising. One of the reasons is the big difference in 
-ranges among feature vector components.
+ranges among feature vector components, for instance, 
+some audio characteristics are in the order of thousands while others 
+range between zero and one.
 
 To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} is applied~\cite{scaler}.
 The result is a dataset where each feature has more or less a distribution 
@@ -113,38 +117,41 @@ centered in zero with unit variance.
 This leads to an improvement on the results using the same
 model as before. 
 
+
 \subsection{Extended dataset}
 \label{extended-dataset}
 
 Results using the three features named in the previous Subsection 
 are promising but not enough, thus, to improve accuracy on the training set, 
-new audio characteristics are extracted, namely: 
+new audio characteristics are extracted, namely:
 \begin{enumerate}
     \item \emph{Zero-crossing rate};
     \item \emph{Roll-off frequency};
     \item \emph{Spectral flux onset strength}.
 \end{enumerate}
 As before, \emph{minimum}, \emph{maximum}, \emph{mean} 
-and \emph{median} are applyied to each feature vector and 
-results are concatenated, resulting in 12 new features for each 
+and \emph{median} are applied to each feature vector and 
+results are concatenated, leading to 12 new features for each 
 audio file.
 Scaling yield to promising results on the first dataset, 
 so the same approach is applied to the extended one.
 
 After testing a network on the new training set 
-results improved once again.
+accuracy improved once again.
 
 \paragraph{Feature selection}
 Adding new features can lead to better results 
-in the end but they all need to be useful to the model, so 
-the extended dataset was subject of some experiments with feature selection, 
-in particular \emph{PCA} algorithm from scikit learn was applied~\cite{pca}.
+in the end but they all need to be useful to the model.
+For this reason the extended dataset is subject of some experiments 
+with feature selection, in particular \emph{PCA} algorithm from scikit
+learn is applied~\cite{pca}.
 
 The main idea is to select a reduced number of features from the total, 
 without loosing information. This approach often leads to better results, 
 as useless features are discarded.
 
 After some experiments with the number of features to select, 120 out of 144
-are selected. This lead to a small improvement on the training set.
+are selected. In this case PCA application leads to a small improvement
+on the training set accuracy.
 
 \newpage

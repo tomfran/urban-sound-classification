@@ -2,7 +2,7 @@
 \label{model-definition}
 This Section starts by presenting how the networks used on the training set are 
 structured. The second Subsection gives an overview of the performances 
-on the different training sets, lastly, the Hyperparameter tuning phase
+on the different training sets, lastly, the hyperparameter tuning phase
 is described.
 
 \subsection{Neural network structure}
@@ -15,21 +15,17 @@ For this reason, the rule of thumb followed to decide hidden neurons quantity is
 following: 
 $$\#\mathit{hidden\; neurons} = \frac{2}{3}\#\mathit{input\;neurons}
 + \#\mathit{output\;neurons}$$
-The next step is to decide the hidden layer number. To respect the 
+The next step is to decide the hidden layers number. To respect the 
 number of hidden neurons, two hidden layers are considered. 
-A higher number of layers would mean having a real small number of neurons per layer.
+A higher quantity would mean having a real small number of neurons per layer.
 
-To build the actual model \emph{Tensorflow} and \emph{Keras} library 
+To build the actual model \emph{Tensorflow} and \emph{Keras} libraries 
 are used.~\cite{tensorflow}~\cite{keras}
 
 \paragraph{Starting point model}
 To give reference, this is the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
 120 input features.
-
-As the last dataset is the one where accuracy is the highest, this is 
-also the starting point architecture for parameters optimization.
-
 \begin{center}
     
     \begin{tikzpicture}[x=1.5cm, y=1.3cm, >=stealth]
@@ -80,6 +76,9 @@ also the starting point architecture for parameters optimization.
     \end{tikzpicture}
 \end{center}
 
+As the last dataset is the one where accuracy is the highest, this is 
+also the starting point architecture for parameters optimization.
+
 \paragraph{Activation and loss functions}
 The activation function for the input and hidden layers is a \emph{Relu}, 
 to prevent \emph{vanishing gradient problem}, 
@@ -90,9 +89,9 @@ is well suited for multiclass classification and, since
 the classes are integers and not one-hot encoded, the sparse version is preferred.~\cite{entropy}
 
 \paragraph{Choosing an optimizer}
-When choosing an optimizer for a Neural Network one must take into account the 
+When choosing an optimizer for a neural network one must take into account the 
 cost of reaching a minimum point on the error function.
-Although more complex optimizers exists, build to reduce training 
+Although more complex optimizers exist, build to reduce training 
 cost or achieve better performances on deep networks, the one choosen 
 for this model is a classic Stochastic Gradient Descent optimizer.
 
@@ -117,9 +116,9 @@ To deal with the minority of some classes, balancing techniques should be
 applied when fitting the model. One of the possible approaches, and the one followed
 here, is to assign class weights. 
 
-The main idea is to penalize errors made on not well represented classes, to account 
-for their minority. To compute class weights, the \emph{compute class weights} function
-from sklearn was used.~\cite{classweight}
+The main idea is to penalize errors made on not well represented classes to account 
+for their minority. Class weights computation relies on the \emph{compute class weights} function
+from sklearn.~\cite{classweight}
 
 The following are the computed quantities for the dataset classes:
 \begin{center}
@@ -181,7 +180,7 @@ and these are the results:
 There is a great improvement after scaling the training set, after 
 that small refinements are made.
 As accuracy is the best on the last dataset, this is the one selected to 
-perform the Hyperparameter tuning.
+perform the hyperparameter tuning.
 
 \subsection{Hyperparameter tuning}
 
@@ -194,7 +193,7 @@ The main goal now is to experiments with ranges of model parameters
 to find a better one.
 
 \paragraph{Grid and Random search comparison}
-Two of the most commonly used strategies in Hyperparameter optimization
+Two of the most commonly used strategies in hyperparameter optimization
 are \emph{Grid} and \emph{Random Search}~\cite{random-grid}. 
 
 In both cases we define ranges of parameters to test different combinations, 
@@ -202,7 +201,7 @@ for instance, fixed the number of neurons, one could try to find the best
 combination of learning rate and momentum that optimize accuracy on the training set.
 
 While similar, the two methodologies differs in the amount of exploration they do.
-The Grid search try all the possible combinations of parameters, while the 
+The Grid Search try all the possible combinations of parameters, while the 
 Random approach fixes a number of iterations and picks an arbitrary combination each time. 
 
 Obviously the first one is more computationally expensive than the second, if 
@@ -229,10 +228,10 @@ The considered ranges for parameters for this run are:
 \end{enumerate}
 
 The models are fitted with 100 \emph{epochs} and \emph{batch size} equals to 32.
-The two last parameters are fixed as, after various runs with the random 
-search, giving them a range seems to not bring any relevant 
+The two last parameters are fixed as, after various Random Search runds, 
+giving them a range seems to not bring any relevant 
 improvement to the model found.
-An early stopped is used on the training to stop it when no progress is made with 
+An early stopper is used on the training to stop it when no progress is made with 
 respect to the last epoch results.
 The total possible models are 400, but the search is performed with 100 iterations
 in total.
