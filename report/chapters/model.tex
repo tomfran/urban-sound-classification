@@ -13,8 +13,8 @@ too much from the dataset, leading to poor performances on the test sets.
 
 For this reason, the rule of thumb followed to decide hidden neurons quantity is the 
 following: 
-$$\#\mathit{hidden\; neurons} = \frac{2}{3}\#\mathit{input\;neurons}
-+ \#\mathit{output\;neurons}$$
+$$\#\mathit{hidden\; neurons} = \frac{2}{3}\big(\#\mathit{input\;neurons}
++ \#\mathit{output\;neurons}\big)$$
 The next step is to decide the hidden layers number. As using the rule 
 presented above gives a quite small amount of units, only two layers are considered,  
 indeed, an higher quantity would mean having a real small number of neurons per layer.
@@ -156,7 +156,7 @@ in the test fold rather than the training ones; in such cases the loss would be
 higher.
 The mean accuracy on the test folds gives a hint about the model performance.
 
-For this step the \emph{Stratified KFold} class from scikit learn was used.~\cite{cross-scikit}
+For this step the \emph{Stratified KFold} class from scikit learn is used.~\cite{cross-scikit}
 
 \paragraph{Results}
 For each presented training set, a model is defined 
@@ -185,7 +185,7 @@ perform the hyperparameter tuning.
 
 Choosing the training set with PCA applied lead to the best results 
 with stratified cross-validation. Although the model is reasonable, 
-it can not be the final one, as many parameters are left on their default value, 
+it can not be the final one as many parameters are left on their default value, 
 for instance, learning rate and momentum of the optimizer are untouched. 
 
 The main goal now is to experiments with ranges of model parameters 
@@ -201,7 +201,8 @@ combination of learning rate and momentum that optimize accuracy on the training
 
 While similar, the two methodologies differs in the amount of exploration they do.
 The grid search try all the possible combinations of parameters, while the 
-random approach fixes a number of iterations and picks an arbitrary combination each time. 
+random approach fixes a number of iterations and picks an arbitrary unseen 
+combination each time. 
 
 Obviously the first one is more computationally expensive than the second, if 
 we fix a small amount of possible iterations, but in theory it finds a better result
