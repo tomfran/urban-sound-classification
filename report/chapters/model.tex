@@ -1,7 +1,7 @@
 \section{Model definition}
 \label{model-definition}
 This Section starts by presenting how the networks used on the training set are 
-structured. The second Subsection gives an overview of the performances 
+structured. The second Subsection gives a detailed overview of the performances 
 on the different training sets, lastly, the hyperparameter tuning phase
 is described.
 
@@ -15,12 +15,12 @@ For this reason, the rule of thumb followed to decide hidden neurons quantity is
 following: 
 $$\#\mathit{hidden\; neurons} = \frac{2}{3}\#\mathit{input\;neurons}
 + \#\mathit{output\;neurons}$$
-The next step is to decide the hidden layers number. To respect the 
-number of hidden neurons, two hidden layers are considered. 
-A higher quantity would mean having a real small number of neurons per layer.
+The next step is to decide the hidden layers number. As using the rule 
+presented above gives a quite small amount of units, only two layers are considered,  
+indeed, an higher quantity would mean having a real small number of neurons per layer.
 
 To build the actual model \emph{Tensorflow} and \emph{Keras} libraries 
-are used.~\cite{tensorflow}~\cite{keras}
+are used.~\cite{tensorflow}\cite{keras}
 
 \paragraph{Starting point model}
 To give reference, this is the model used on the PCA training set, mentioned at 
@@ -81,9 +81,9 @@ also the starting point architecture for parameters optimization.
 
 \paragraph{Activation and loss functions}
 The activation function for the input and hidden layers is a \emph{Relu}, 
-to prevent \emph{vanishing gradient problem}, 
+typically used to prevent the \emph{vanishing gradient problem}, 
 and the output one uses a \emph{Softmax} to have classification probabilities
-among classes.~\cite{relu}\cite{soft}\cite{vanishing}
+among classes.~\cite{relu}\cite{soft}\cite{vanishing}\\
 The loss used is the \emph{Sparse Categorical Crossentropy loss} as it 
 is well suited for multiclass classification and, since 
 the classes are integers and not one-hot encoded, the sparse version is preferred.~\cite{entropy}
@@ -109,7 +109,7 @@ detailing how class imbalance is faced and the applied validation method.
 
 Note that all the random seeds used by Tensorflow are fixed 
 to make results reproducible. This step is necessary as many parameters initial 
-state are random, for instance, the Neural Network weights.
+value is random, for instance, the neural network weights.
 
 \paragraph{Class imbalance}
 To deal with the minority of some classes, balancing techniques should be 
@@ -118,8 +118,7 @@ here, is to assign class weights.
 
 The main idea is to penalize errors made on not well represented classes to account 
 for their minority. Class weights computation relies on the \emph{compute class weights} function
-from sklearn.~\cite{classweight}
-
+from sklearn.~\cite{classweight}\\
 The following are the computed quantities for the dataset classes:
 \begin{center}
     \begin{tabular}{ |l|c|c| } 
@@ -139,14 +138,14 @@ The following are the computed quantities for the dataset classes:
         \hline
     \end{tabular}
 \end{center}
-As expected, the less numerous classes have higher class weight than the rest. 
-In particular, the misclassification of a car horn class sample
-counts almost 2.5 times more than an air conditioner one.
+As expected, the less numerous classes have higher class weight than the rest,
+in particular, the misclassification of a car horn sample
+counts more than double than an air conditioner one.
 
 \paragraph{Stratified cross-validation}
-To estimate performance on the training set stratified cross-validation with 
+To estimate performance on the training set, stratified cross-validation with 
 five folds is used. Basically the dataset is divided into five parts 
-and a model is repeatly trained on four and tested on one, all while considering class 
+and a model is repeatedly trained on four and tested on one, all while considering class 
 distribution, indeed, the original distribution of the classes is maintained 
 in the splits.~\cite{stratified}
 
@@ -155,8 +154,8 @@ In fact, applying a classical cross-validation could show misleading results,
 for instance when the minority classes are more present 
 in the test fold rather than the training ones; in such cases the loss would be 
 higher.
-
 The mean accuracy on the test folds gives a hint about the model performance.
+
 For this step the \emph{Stratified KFold} class from scikit learn was used.~\cite{cross-scikit}
 
 \paragraph{Results}
@@ -192,30 +191,30 @@ for instance, learning rate and momentum of the optimizer are untouched.
 The main goal now is to experiments with ranges of model parameters 
 to find a better one.
 
-\paragraph{Grid and Random search comparison}
+\paragraph{Grid and random search comparison}
 Two of the most commonly used strategies in hyperparameter optimization
-are \emph{Grid} and \emph{Random Search}~\cite{random-grid}. 
+are \emph{grid} and \emph{random search}~\cite{random-grid}. 
 
 In both cases we define ranges of parameters to test different combinations, 
 for instance, fixed the number of neurons, one could try to find the best 
 combination of learning rate and momentum that optimize accuracy on the training set.
 
 While similar, the two methodologies differs in the amount of exploration they do.
-The Grid Search try all the possible combinations of parameters, while the 
-Random approach fixes a number of iterations and picks an arbitrary combination each time. 
+The grid search try all the possible combinations of parameters, while the 
+random approach fixes a number of iterations and picks an arbitrary combination each time. 
 
 Obviously the first one is more computationally expensive than the second, if 
 we fix a small amount of possible iterations, but in theory it finds a better result
 than going the random route. 
-Nonetheless the Grid Search can led to over-fitting, and in practice Random 
-Search in preferred.
+Nonetheless the grid search can led to over-fitting and in practice random 
+search in preferred.
 
 \paragraph{Random search}
-We now run a Random Search with various model parameters 
+We now run a random search with various parameters 
 to optimize the initial model.
 Note that class weights are still considered and the models are evaluated
 again with a stratified cross-validation.
-The optimizer used is the Stochastic Gradient Descent.
+The optimizer used is the stochastic gradient descent.
 
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
@@ -228,9 +227,10 @@ The considered ranges for parameters for this run are:
 \end{enumerate}
 
 The models are fitted with 100 \emph{epochs} and \emph{batch size} equals to 32.
-The two last parameters are fixed as, after various Random Search runds, 
+The two last parameters are fixed as, after various random search rounds, 
 giving them a range seems to not bring any relevant 
 improvement to the model found.
+
 An early stopper is used on the training to stop it when no progress is made with 
 respect to the last epoch results.
 The total possible models are 400, but the search is performed with 100 iterations

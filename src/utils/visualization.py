@@ -1,6 +1,11 @@
 from matplotlib import pyplot as plt
 
 def show_plots(history):
+    """Show training and validation error performances
+
+    Args:
+        history (Keras fit history): Return value of the keras fit method
+    """
     fig, (ax1, ax2) = plt.subplots(2, sharex=True,figsize=(10,10))
     plt.xlabel("Epochs")
     ax1.set_title("Loss")

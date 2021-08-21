@@ -2,6 +2,16 @@ import numpy as np
 from ..data import Dataset
 
 def show_accuracy_loss(net, scaling="scaled", test_dataset_path="../data/processed/extended"):
+    """Show performance on the test sets
+
+    Args:
+        net (Keras model): Keras compiled model
+        scaling (str, optional): dataset properties, assuming the datasets are named test_fold_properties.csv. Defaults to "scaled".
+        test_dataset_path (str, optional): Dataset folder. Defaults to "../data/processed/extended".
+
+    Returns:
+        List: Accuracy and loss performance
+    """
     loss = []
     accuracy = []
 

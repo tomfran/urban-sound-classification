@@ -22,7 +22,18 @@ class NeuralNetwork:
                      momentum=0.0,
                      loss=keras.losses.SparseCategoricalCrossentropy(),
                      metrics=["accuracy"]):
+        """Neural network creation function
 
+        Args:
+            neurons (tuple, optional): Number of neurons per layer. Defaults to (144, 70, 40, 30, 10).
+            learning_rate (float, optional): Optimizer learning rate. Defaults to 0.01.
+            momentum (float, optional): Optimizer momentum. Defaults to 0.0.
+            loss ([type], optional): Loss function to use. Defaults to keras.losses.SparseCategoricalCrossentropy().
+            metrics (list, optional): Metrics to compile. Defaults to ["accuracy"].
+
+        Returns:
+            Keras model: Compiled keras neural network
+        """
         ll=[layers.Dense(units=neurons[0], activation='relu')]
         for n in neurons[1:-1]:
             ll.append(layers.Dense(n, activation='relu'))
@@ -39,7 +50,17 @@ class NeuralNetwork:
                        param_grid={}, 
                        dataset_path="../data/processed/extended/train_scaled_extended.csv", 
                        iterations=10):
+        """Optimize a model by performing random or grid search
 
+        Args:
+            method (str, optional): Random or grid search. Defaults to "grid".
+            param_grid (dict, optional): Parameters grid. Defaults to {}.
+            dataset_path (str, optional): Path to the dataset to load. Defaults to "../data/processed/extended/train_scaled_extended.csv".
+            iterations (int, optional): Number of iteration for the random search. Defaults to 10.
+
+        Returns:
+            Scikitlearn search results: results of the parameter optimization
+        """
         model = KerasClassifier(build_fn=NeuralNetwork.create_model, verbose=0)
         
         d = Dataset(dataset_path, test_size=0)

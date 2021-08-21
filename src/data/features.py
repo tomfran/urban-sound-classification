@@ -79,7 +79,6 @@ class Features:
         
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
 
-        # total = np.concatenate((mfcc, chroma_stft, rms), axis=0)
         total = np.concatenate((mfcc, chroma_stft, rms, zero, rolloff, np.array([onset_env])), axis=0)
         return np.apply_along_axis(array_map, 1, total).flatten()
 
@@ -166,7 +165,17 @@ class Features:
                         n=120, 
                         save_path="../models/pca/pca_training.pkl",
                         save_pca=False):
-        
+        """Scale dataframe by fitting a PCA
+
+        Args:
+            dataframe (Pandas dataframe): Dataframe to process
+            n (int, optional): Number of features to select. Defaults to 120.
+            save_path (str, optional): Path where to save the fitted pca. Defaults to "../models/pca/pca_training.pkl".
+            save_pca (bool, optional): Choose wether to save or not the fitted pca. Defaults to False.
+
+        Returns:
+            Pandas dataframe: reduced dataframe
+        """
         pca = PCA(n_components=n)
         x = dataframe.drop("class", axis=1)
         reduced_x = pca.fit_transform(x)
@@ -179,6 +188,15 @@ class Features:
         return reduced_df
 
     def apply_pca(self, dataframe, pca_load_path):
+        """Apply PCA to the dataset
+
+        Args:
+            dataframe (Pandas dataframe): dataframe where to perform feature selection
+            pca_load_path (String): path to the fitted pca to load
+
+        Returns:
+            Pandas dataframe: dataframe with features selected
+        """
         pca = load(open(pca_load_path, "rb"))
         x = dataframe.drop("class", axis=1)
         reduced_x = pca.transform(x)

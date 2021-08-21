@@ -9,8 +9,8 @@ three layers \emph{multilayer perceptron},
 a feed forward neural network where each layer 
 is densely connected  to the following, 
 with a reasonable number of neurons, trained 
-for 100 epochs with default parameters for the \emph{Stochastic Gradient 
-Descent optimizer}.~\cite{mlp}\cite{sgd}
+for 100 epochs with default parameters for the \emph{stochastic gradient 
+descent optimizer}.~\cite{mlp}\cite{sgd}\\
 The accuracy on the training is computed with a \emph{cross-validation} 
 approach.~\cite{cross}\\
 A deeper discussion about the models structure as well as the validation
@@ -73,7 +73,7 @@ All the operations on the datasets are performed with \emph{Pandas} library.~\ci
 \subsection{First dataset}
 Extracting features from audio files is not straightforward, nonetheless there 
 are a collection of audio characteristics that are commonly used in audio machine learning 
-applications.~\cite{features}.
+applications.~\cite{features}
 
 To extract information from audio files \emph{Librosa} is used.~\cite{librosa}
 The library provides many methods to choose from,
@@ -85,12 +85,12 @@ are these three ones:
     \item \emph{Root-mean-square}.
 \end{enumerate}
 Each feature consists of an array of arrays containing measurements. 
-A series of functions were applied to each sub-array and results 
-were concatenated in a final feature vector. 
+A series of functions are applied to each sub-array and results 
+are concatenated in a final feature vector. 
 The functions applied are \emph{minimum}, \emph{maximum}, \emph{mean} 
-and \emph{median} from the \emph{Numpy} library~\cite{numpy}.
+and \emph{median} from the \emph{Numpy} library.~\cite{numpy}
 
-This approach resulted in 132 components feature vectors.
+This approach results in 132 components feature vectors.
 
 \paragraph{Parallelizing feature extraction}
 Extracting the three features listed above is really intensive 
@@ -105,13 +105,13 @@ Improvement is great as the time to process a single fold
 is cutted into a third.
 
 \paragraph{Feature scaling}
-After testing some Neural Networks on the first dataset results 
+After testing some neural networks on the first dataset results 
 are not promising. One of the reasons is the big difference in 
 ranges among feature vector components, for instance, 
 some audio characteristics are in the order of thousands while others 
 range between zero and one.
 
-To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} is applied~\cite{scaler}.
+To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} is applied.~\cite{scaler}
 The result is a dataset where each feature has more or less a distribution 
 centered in zero with unit variance.
 This leads to an improvement on the results using the same
@@ -133,18 +133,18 @@ As before, \emph{minimum}, \emph{maximum}, \emph{mean}
 and \emph{median} are applied to each feature vector and 
 results are concatenated, leading to 12 new features for each 
 audio file.
-Scaling yield to promising results on the first dataset, 
+Scaling yields to promising results on the first dataset, 
 so the same approach is applied to the extended one.
 
 After testing a network on the new training set 
-accuracy improved once again.
+we can see a better accuracy.
 
 \paragraph{Feature selection}
 Adding new features can lead to better results 
 in the end but they all need to be useful to the model.
 For this reason the extended dataset is subject of some experiments 
 with feature selection, in particular \emph{PCA} algorithm from scikit
-learn is applied~\cite{pca}.
+learn is applied.~\cite{pca}
 
 The main idea is to select a reduced number of features from the total, 
 without loosing information. This approach often leads to better results, 
@@ -152,6 +152,6 @@ as useless features are discarded.
 
 After some experiments with the number of features to select, 120 out of 144
 are selected. In this case PCA application leads to a small improvement
-on the training set accuracy.
+on the training set in terms of accuracy.
 
 \newpage
