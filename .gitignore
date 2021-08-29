@@ -2,6 +2,8 @@ data/processed/extended/test*
 data/processed/extended/train*
 data/processed/initial/test*
 data/processed/initial/train*
+data/processed/cnn
+
 data/raw
 *dask*
 .vscode

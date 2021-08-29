@@ -20,6 +20,7 @@ class NeuralNetwork:
     def create_model(neurons=(144, 70, 40, 30, 10),
                      learning_rate=0.01,
                      momentum=0.0,
+                     optimizer="sgd",
                      loss=keras.losses.SparseCategoricalCrossentropy(),
                      metrics=["accuracy"]):
         """Neural network creation function
@@ -40,7 +41,12 @@ class NeuralNetwork:
         ll.append(layers.Dense(neurons[-1], activation='softmax'))
 
         model = keras.Sequential(ll)
-        model.compile(optimizer=keras.optimizers.SGD(learning_rate=learning_rate, momentum=momentum),
+        if optimizer == "sgd":
+            opt = keras.optimizers.SGD(learning_rate=learning_rate, momentum=momentum)
+        elif optimizer == "adam":
+            opt = keras.optimizers.Adam()
+
+        model.compile(optimizer=opt,
                       loss=loss, 
                       metrics=metrics) 
         return model

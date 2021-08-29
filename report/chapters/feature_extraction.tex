@@ -129,10 +129,10 @@ new audio characteristics are extracted, namely:
     \item \emph{Roll-off frequency};
     \item \emph{Spectral flux onset strength}.
 \end{enumerate}
-As before, \emph{minimum}, \emph{maximum}, \emph{mean} 
-and \emph{median} are applied to each feature vector and 
-results are concatenated, leading to 12 new features for each 
-audio file.
+This time \emph{standard deviation} is added to
+the previous functions \emph{minimum}, \emph{maximum}, \emph{mean} 
+and \emph{median}. Each one iss applied to the feature sub-vectors and 
+results are concatenated, leading to a total of 180 features for each audio file.
 Scaling yields to promising results on the first dataset, 
 so the same approach is applied to the extended one.
 
@@ -150,8 +150,11 @@ The main idea is to select a reduced number of features from the total,
 loosing as little information as possible. This approach often leads to better results, 
 as useless features are discarded.
 
-After some experiments with the number of features to select, 120 out of 144
-are selected. In this case PCA application leads to a small improvement
-on the training set in terms of accuracy.
+The method used to select features offers the possibility to specify how much 
+variance to preserve in the reduced dataset, this means that the number of 
+components is not given explicitly, indeed we try to preserve 99 percent of the original variance.
 
+This technique resulted in 102 features, unfortunately, a model applied to this new dataset 
+failed to reach the performances obtained by the previous one, nonetheless, performances
+improved with respect to the scaled dataset.
 \newpage

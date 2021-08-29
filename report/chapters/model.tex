@@ -1,7 +1,8 @@
 \section{Model definition}
 \label{model-definition}
-This Section starts by presenting how the networks used on the training set are 
-structured. The second Subsection gives a detailed overview of the performances 
+
+This Section starts by presenting how the networks used on the initial training sets are 
+structured. We proceed to give a detailed overview of the performances 
 on the different training sets, lastly, the hyperparameter tuning phase
 is described.
 
@@ -19,16 +20,31 @@ The next step is to decide the hidden layers number. As using the rule
 presented above gives a quite small amount of units, only two layers are considered,  
 indeed, an higher quantity would mean having a real small number of neurons per layer.
 
+Applying this rule ended up in the following architectures on the four 
+different training sets, where the output layer is fixed at 10:
+\begin{center}
+    \begin{tabular}{ |l|r|r|r| } 
+        \hline
+        Training set & Input & 1st Hidden & 2nd Hidden  \\
+        \hline
+        132 features unscaled &  132 & 60 & 30 \\
+        132 features scaled &  132 & 60 & 30 \\
+        180 features scaled &  180 & 80 & 46 \\
+        102 features reduced with PCA &  102 & 45 & 30 \\
+        \hline
+    \end{tabular}
+\end{center}
+
 To build the actual model \emph{Tensorflow} and \emph{Keras} libraries 
 are used.~\cite{tensorflow}\cite{keras}
 
 \paragraph{Starting point model}
 To give reference, this is the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
-120 input features.
+102 input features.
 \begin{center}
     
-    \begin{tikzpicture}[x=1.5cm, y=1.3cm, >=stealth]
+    \begin{tikzpicture}[x=1.5cm, y=1cm, >=stealth]
         
         % layers
         \foreach \m/\l [count=\y] in {1,2,3,missing,4}
@@ -44,14 +60,14 @@ the end of Subsection \vref{extended-dataset}, with
         \node [every neuron/.try, neuron \m/.try ] (output-\m) at (5.25,1.5-\y) {};
         
         %   label
-        \foreach \l [count=\i] in {1,2,3,{120}}
+        \foreach \l [count=\i] in {1,2,3,{102}}
         \draw [<-] (input-\i) -- ++(-1,0)
         node [above, midway] {$I_{\l}$};
         
-        \foreach \l [count=\i] in {1,60}
+        \foreach \l [count=\i] in {1,45}
         \node [above] at (hidden-\i.north) {$H_{\l}$};
         
-        \foreach \l [count=\i] in {1,25}
+        \foreach \l [count=\i] in {1,30}
         \node [above] at (hidden2-\i.north) {$H_{\l}$};
         
         \foreach \l [count=\i] in {1,10}
@@ -75,9 +91,8 @@ the end of Subsection \vref{extended-dataset}, with
         
     \end{tikzpicture}
 \end{center}
-
-As the last dataset is the one where accuracy is the highest, this is 
-also the starting point architecture for parameters optimization.
+This last model, with the one built to predict the 180 features training set, are the ones selected for 
+the hyperparameter tuning phase. 
 
 \paragraph{Activation and loss functions}
 The activation function for the input and hidden layers is a \emph{Relu}, 
@@ -159,10 +174,8 @@ The mean accuracy on the test folds gives a hint about the model performance.
 For this step the \emph{Stratified KFold} class from scikit learn is used.~\cite{cross-scikit}
 
 \paragraph{Results}
-For each presented training set, a model is defined 
-with the structure presented at the beginning of this Section, 
-and these are the results:
-
+The following are the results on the training sets, using the architectures 
+presented at the beginning of the Subsection.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
@@ -170,26 +183,28 @@ and these are the results:
         \hline
         132 features unscaled &  0.1138 & 0.0039 \\
         132 features scaled &  0.5743 & 0.0324 \\
-        144 features scaled &  0.6079 & 0.0486 \\
-        120 features reduced with PCA &  0.6143 & 0.0481 \\
+        180 features scaled &  0.6363 & 0.0494 \\
+        102 features reduced with PCA &  0.6188 & 0.0420 \\
         \hline
     \end{tabular}
 \end{center}
 
 There is a great improvement after scaling the training set, after 
 that small refinements are made.
-As accuracy is the best on the last dataset, this is the one selected to 
+As accuracy is the best on the last two training sets, those are the two selected to 
 perform the hyperparameter tuning.
 
 \subsection{Hyperparameter tuning}
 
-Choosing the training set with PCA applied lead to the best results 
-with stratified cross-validation. Although the model is reasonable, 
-it can not be the final one as many parameters are left on their default value, 
+The last two tries with feature extraction lead to the best results 
+with stratified cross-validation. Although the two models are reasonable, 
+they can not be the final ones as many parameters are left on their default value, 
 for instance, learning rate and momentum of the optimizer are untouched. 
 
 The main goal now is to experiments with ranges of model parameters 
-to find a better one.
+to find a better one. From now on, the model build on the 180 features training set is 
+called \emph{Extended model}, 
+while the one tested on the PCA training set is named \emph{PCA model}.
 
 \paragraph{Grid and random search comparison}
 Two of the most commonly used strategies in hyperparameter optimization
@@ -212,49 +227,75 @@ search in preferred.
 
 \paragraph{Random search}
 We now run a random search with various parameters 
-to optimize the initial model.
+to optimize the initial models.
 Note that class weights are still considered and the models are evaluated
 again with a stratified cross-validation.
 The optimizer used is the stochastic gradient descent.
 
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
-    \item \emph{Neurons}: first and last layers stay the same, while 
+    \item \emph{Neurons}: input layer has dimension $H_i$ and last layer $H_o$, while 
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
-    $$60 + 2i\;\;\text{and}\;\;25 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
+    $$H_1 + 2i\;\;\text{and}\;\;H_2 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
     \item \emph{Learning rate}: $0.001, 0.01, 0.1, 0.5$;
-    \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$.
+    \item \emph{Momentum}: $0.0, 0.01, 0.1, 1$;
+    \item \emph{Epochs}: $60, 80, 100$;
+    \item \emph{Batch size}: $32, 64$.
 \end{enumerate}
 
-The models are fitted with 100 \emph{epochs} and \emph{batch size} equals to 32.
-The two last parameters are fixed as, after various random search rounds, 
-giving them a range seems to not bring any relevant 
-improvement to the model found.
-
-An early stopper is used on the training to stop it when no progress is made with 
-respect to the last epoch results.
-The total possible models are 400, but the search is performed with 100 iterations
-in total.
-
-\paragraph{Final model}
-The best model found is the following: 
+Where $H_i$, $H_1$, $H_2$ and $H_o$ are input, first hidden, second hidden 
+and output layer dimensions.
+The random search is performed on two models, with those starting dimensions: 
 \begin{itemize}
-    \item \emph{Neurons}: 120 for input, 62 for the first hidden layer, 27 for the second, and 10 for output; 
-    \item \emph{Momentum}: 0.0;
-    \item \emph{Learning rate}: 0.1.
+    \item \emph{Extended model}: 180, 80, 46, 10.
+    \item \emph{PCA model}: 102, 45, 30 and 10;
 \end{itemize}
-Comparing the initial model with the one found now, a small improvement 
-can be seen in accuracy despite a worse standard deviation:
+
+An \emph{early stopper} with default parameters is used on the training to stop it when no progress is made with 
+respect to the last epoch results.~\cite{early}
+The search is performed with 100 iterations for both rounds.
+
+\paragraph{Final models}
+The first round of the random search, performed on the Extended model, resulted 
+in the following parameters:
+\begin{itemize}
+    \item Neurons: 180 for input, 76 for the first hidden layer, 50 for the second and 10 for output;
+    \item Momentum: 0.01
+    \item Learning rate: 0.01
+    \item Epochs: 80
+    \item Batch size: 64
+\end{itemize}
+We can see an improvement in accuracy by comparing it with to starting point model:
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
         Model & Mean accuracy & St. deviation \\
         \hline
-        Initial model & 0.6143 & 0.0481\\
-        Random search result & 0.6297 & 0.0530 \\
+        Initial extended model & 0.6363 & 0.0494\\
+        Random search result & 0.6497 & 0.0431\\
         \hline
     \end{tabular}
 \end{center}
-This network is the one chosen to evaluate performance on the test sets.
+
+The second random search on the smaller PCA model, resulted in this results:
+\begin{itemize}
+    \item Neurons: 102 for input, 45 for the first hidden layer, 30 for the second and 10 for output;
+    \item Momentum: 0.01
+    \item Learning rate: 0.1
+    \item Epochs: 80
+    \item Batch size: 32
+\end{itemize}
+As before, comparing it with the starting model, we can see some better results:
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Model & Mean accuracy & St. deviation \\
+        \hline
+        Initial PCA model & 0.6188 & 0.0420\\
+        Random search result & 0.6270 & 0.0315\\
+        \hline
+    \end{tabular}
+\end{center}
+
 \newpage

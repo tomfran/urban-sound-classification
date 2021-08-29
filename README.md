@@ -32,9 +32,9 @@ In the [second notebook](https://github.com/tomfran/urban-sound-classification/b
 ### Cross validation on the training sets
 To understand what training set is best suited for the project, 
 cross validation is performed on the initial, scaled, extended and pca dataset obtained at the previous step.
-The results are presented in the [third notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/03_cross_validation.ipynb).
+The results are presented in the [third notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/03_cross_validation_mlp.ipynb).
 
 ### Hyperparameter tuning 
 After selecting the best dataset from the cross validation results, 
 a Random Search is performed to optimize the network hyperparameters, 
-details about results as well as test set evaluation can be found on the [last notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/04_hyperparameter_tuning.ipynb).
+details about results as well as test set evaluation can be found on the [last notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/04_hyperparameter_tuning_mlp.ipynb).
