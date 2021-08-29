@@ -61,7 +61,8 @@ class Features:
                     np.min(array), 
                     np.max(array),
                     np.median(array), 
-                    np.mean(array)
+                    np.mean(array), 
+                    np.std(array)
                 ]
         
         y, sr = librosa.load(audio_file, sr = None)
@@ -139,8 +140,6 @@ class Features:
         
         return scaled_df
     
-
-    
     def apply_scaling(self, dataframe, scaler_load_path):
         """
         Apply scaling to a dataframe, with a scaler loaded 
@@ -162,7 +161,7 @@ class Features:
     
     def select_features(self, 
                         dataframe,
-                        n=120, 
+                        n=0.95, 
                         save_path="../models/pca/pca_training.pkl",
                         save_pca=False):
         """Scale dataframe by fitting a PCA
@@ -176,10 +175,10 @@ class Features:
         Returns:
             Pandas dataframe: reduced dataframe
         """
-        pca = PCA(n_components=n)
+        pca = PCA(n_components=n, svd_solver="full")
         x = dataframe.drop("class", axis=1)
         reduced_x = pca.fit_transform(x)
-        reduced_df = pd.DataFrame(data=reduced_x, columns=dataframe.columns[1:n+1])
+        reduced_df = pd.DataFrame(data=reduced_x, columns=dataframe.columns[1:pca.n_components_+1])
         reduced_df.insert(0, "class", dataframe["class"])
         
         if save_pca:
@@ -204,7 +203,6 @@ class Features:
         reduced_df.insert(0, "class", dataframe["class"])
         return reduced_df
 
-    
     def save_dataframe(self, dataframe, save_name=""):
         """
         Save the dataframe to disk
