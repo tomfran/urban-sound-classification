@@ -27,7 +27,8 @@ The methodology followed in the project can be seen in the various jupyter noteb
 ### Feature extraction and dataset creation
 In the [first notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/01_dataset.ipynb) audio features are extracted using Librosa library and scaling 
 is applied. <br>
-In the [second notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/02_dataset_extended.ipynb), more features are extracted and PCA feature selection is exploited to reduce the dataset dimensionality.
+In the [second notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/02_dataset_extended_cnn.ipynb), more features are extracted and PCA feature selection is exploited to reduce the dataset dimensionality.
+Also, audio as an image is extracted from the dataset for later training a CNN.
 
 ### Cross validation on the training sets
 To understand what training set is best suited for the project, 
@@ -37,4 +38,9 @@ The results are presented in the [third notebook](https://github.com/tomfran/urb
 ### Hyperparameter tuning 
 After selecting the best dataset from the cross validation results, 
 a Random Search is performed to optimize the network hyperparameters, 
-details about results as well as test set evaluation can be found on the [last notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/04_hyperparameter_tuning_mlp.ipynb).
+details about results as well as test set evaluation can be found on the [fourth notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/04_hyperparameter_tuning_mlp.ipynb).
+
+### CNN training and tuning
+The [last notebook](https://github.com/tomfran/urban-sound-classification/blob/main/notebooks/05_cnn.ipynb) presents the results using a convolutional neural 
+network on the image dataset obtained in the second notebook.
+This notebook was executed on Google Colab for performance reasons.

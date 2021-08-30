@@ -13,8 +13,8 @@ with a reasonable number of neurons, trained
 for 100 epochs with default parameters for the \emph{stochastic gradient 
 descent optimizer}.~\cite{mlp}\cite{sgd}\\
 A \emph{convolutional neural network}, a network with 
-a series of convolutional and polling layers, folowed by 
-some densely connected ones, is applied to the image dataset.~\cite{cnn} \\
+a series of convolutional and pooling layers, followed by 
+some densely connected ones, is applied to the image dataset, trained for 10 epochs.~\cite{cnn} \\
 The accuracy on the training is computed with a \emph{cross-validation} 
 approach.~\cite{cross}\\
 
@@ -184,7 +184,7 @@ as different channels, or choose only one to have the equivalent of a grayscale 
 
 \paragraph{Short time Furier Transform}
 For this try with image classification the Short-time Furier transform 
-is extracted from the audio files, and the used as a single channel image. 
+is extracted from the audio files, and then used as a single channel image. 
 In particular, we extract 128 intervals, and, to accomodate 
 the different lenghts of audio in the dataset, pad the result to 256 width vectors.
 

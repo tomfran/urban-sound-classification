@@ -49,7 +49,7 @@ To build the actual model \emph{Tensorflow} and \emph{Keras} libraries
 are used.~\cite{tensorflow}\cite{keras}
 
 \paragraph{Starting point model}
-To give reference, Figure \ref{mod} the model used on the PCA training set, mentioned at 
+To give reference, Figure \ref{mod} shows the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
 102 input features.
 \begin{figure}
@@ -245,7 +245,7 @@ The optimizer used is the stochastic gradient descent.
 
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
-    \item \emph{Neurons}: input layer has dimension $H_i$ and last layer $H_o$, while 
+    \item \emph{Neurons}: input layer has dimension $I$ and last layer $O$, while 
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
     $$H_1 + 2i\;\;\text{and}\;\;H_2 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
@@ -255,13 +255,19 @@ The considered ranges for parameters for this run are:
     \item \emph{Batch size}: $32, 64$.
 \end{enumerate}
 
-Where $H_i$, $H_1$, $H_2$ and $H_o$ are input, first hidden, second hidden 
-and output layer dimensions.
-The random search is performed on two models, with those starting dimensions: 
-\begin{itemize}
-    \item \emph{Extended model}: 180, 80, 46, 10.
-    \item \emph{PCA model}: 102, 45, 30 and 10;
-\end{itemize}
+Where $I$, $H_1$, $H_2$ and $O$ are input, first hidden, second hidden 
+and output layer dimensions, thus they depend on the initial architecture.
+As stated before, the two models considered are the following: 
+\begin{center}
+    \begin{tabular}{ |l|r|r|r|r|} 
+        \hline
+        Model name & $I$ & $H_1$ & $H_2$ & $O$ \\
+        \hline
+        Extended model & 180 & 80 & 46 & 10 \\
+        PCA model & 102 & 45 & 30 & 10 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 An \emph{early stopper} with patience equals to three is used on the training to stop it when no progress is made with 
 respect to the last three epochs result.~\cite{early}
@@ -277,21 +283,21 @@ in the following parameters:
     \item Epochs: 80
     \item Batch size: 64
 \end{itemize}
-We can see an improvement in accuracy by comparing it with to starting point model:
+We can see an improvement in accuracy by comparing it to the starting point model:
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
         Model & Mean accuracy & St. deviation \\
         \hline
         Initial extended model & 0.6363 & 0.0494\\
-        Random search result & 0.6550 & 0.0388\\
+        Tuned extended model & 0.6497 & 0.0431\\
         \hline
     \end{tabular}
 \end{center}
 
 The second random search on the smaller PCA model, resulted in this results:
 \begin{itemize}
-    \item Neurons: 102 for input, 45 for the first hidden layer, 30 for the second and 10 for output;
+    \item Neurons: 102 for input, 45 for the first hidden layer, 32 for the second and 10 for output;
     \item Momentum: 0.01
     \item Learning rate: 0.1
     \item Epochs: 80
@@ -304,17 +310,85 @@ As before, comparing it with the starting model, we can see some better results:
         Model & Mean accuracy & St. deviation \\
         \hline
         Initial PCA model & 0.6188 & 0.0420\\
-        Random search result & 0.6270 & 0.0315\\
+        Tuned PCA model & 0.6270 & 0.0315\\
         \hline
     \end{tabular}
 \end{center}
 
 \subsection{Convolutional neural network}
+This subsection presents the results obtained by a convolutional
+neural network trained on the image datasets presented at the end of 
+Section \vref*{feature-extraction}.
+We start by giving an overview of the network, to then proceed 
+with the training results and hyperparameter tuning.
 
 \subsubsection{Network structure}
+The structure of a neural network for image classification 
+consists of convolutional layers followed by pooling layers, 
+and, at the end, densely connected ones to have the output classification.
+
+The main idea is to extract relevant features from the images 
+with the convolutional layers, that apply a kernel to the input 
+to detect patterns and image features.
+After the convolution part there is a pooling layer that reduces dimensionality.
+
+Taking inspiration from the \emph{VGG19 architecture}, that stacks two or more 
+convolutional layers to then apply pooling, the network is built with 
+the following layers:~\cite{vgg}
+\begin{itemize}
+    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation
+    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 2 strides
+    \item \emph{Convolution}: 32 filters, kernel size of $3 \times 3$, Relu activation
+    \item \emph{Convolution}: 32 filters, kernel size of $3 \times 3$, Relu activation
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 2 strides
+    \item \emph{Flatten}
+    \item \emph{Dense}: 100 neurons and Relu activation
+    \item \emph{Dense}: 40 neurons and Relu activation
+    \item \emph{Output}: 10 neurons and softmax activation
+\end{itemize}
 
 \subsubsection{Training set results}
+To have an idea of the performances of the initial convolutional network,
+a cross validation is performed on the image training set. 
+
+As before, a stratified cross-validation is used with five folds, thus, 
+results can be compared to the multilayer perceptrons previously trained.
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Training set & Mean accuracy & St. deviation \\
+        \hline
+        Tuned extended model& 0.6497 & 0.0431 \\
+        Tuned PCA model & 0.6270 & 0.0315 \\
+        Image dataset & xxx &  xxx \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \subsubsection{Hyperparameter tuning}
+Training a CNN is really expensive compared to the multilayer perceptrons.
+Performing a full random search is infeasible with the resources we have, therefore, 
+to have an idea about the impact on accuracy of the network parameters, 
+we run cross validation on the following models:
+\begin{itemize}
+    \item x
+    \item x
+    \item x
+    \item x
+\end{itemize}
+
+\paragraph{Final training results}
+\begin{center}
+    \begin{tabular}{ |l|r|r| } 
+        \hline
+        Training set & Mean accuracy & St. deviation \\
+        \hline
+        Tuned extended model& 0.6497 & 0.0431 \\
+        Tuned PCA model & 0.6270 & 0.0315 \\
+        Image dataset & xxx &  xxx \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \newpage
