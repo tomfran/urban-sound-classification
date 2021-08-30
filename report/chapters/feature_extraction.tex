@@ -4,15 +4,20 @@
 This Sections presents the original dataset structure and the 
 steps followed to create training and test sets from it.
 
-Note that the models mentioned in this section are
+Note that the models mentioned in this section, for the first and 
+extended datasets are
 three layers \emph{multilayer perceptron}, 
 a feed forward neural network where each layer 
 is densely connected  to the following, 
 with a reasonable number of neurons, trained 
 for 100 epochs with default parameters for the \emph{stochastic gradient 
 descent optimizer}.~\cite{mlp}\cite{sgd}\\
+A \emph{convolutional neural network}, a network with 
+a series of convolutional and polling layers, folowed by 
+some densely connected ones, is applied to the image dataset.~\cite{cnn} \\
 The accuracy on the training is computed with a \emph{cross-validation} 
 approach.~\cite{cross}\\
+
 A deeper discussion about the models structure as well as the validation
 techniques used in the project can be found at Section \vref{model-definition}.
 
@@ -71,6 +76,7 @@ the various test sets.
 All the operations on the datasets are performed with \emph{Pandas} library.~\cite{pandas}
 
 \subsection{First dataset}
+\label{first}
 Extracting features from audio files is not straightforward, nonetheless there 
 are a collection of audio characteristics that are commonly used in audio machine learning 
 applications.~\cite{features}
@@ -80,8 +86,9 @@ The library provides many methods to choose from,
 to keep it simple, for the first try with this dataset, the extracted features 
 are these three ones: 
 \begin{enumerate}
-    \item \emph{Mel-frequency cepstral coefficients};
-    \item \emph{Chromagram};
+    \item \emph{Mel-frequency cepstral coefficients}: the first 20 coefficients 
+    are extracted;
+    \item \emph{Chromagram}: the first 12 chromas are considered;
     \item \emph{Root-mean-square}.
 \end{enumerate}
 Each feature consists of an array of arrays containing measurements. 
@@ -111,7 +118,7 @@ ranges among feature vector components, for instance,
 some audio characteristics are in the order of thousands while others 
 range between zero and one.
 
-To mitigate this effect a \emph{StandardScaler} from \emph{scikit learn} is applied.~\cite{scaler}
+To mitigate this effect a \emph{StandardScaler} with default parameters from \emph{scikit learn} is applied.~\cite{scaler}
 The result is a dataset where each feature has more or less a distribution 
 centered in zero with unit variance.
 This leads to an improvement on the results using the same
@@ -131,7 +138,7 @@ new audio characteristics are extracted, namely:
 \end{enumerate}
 This time \emph{standard deviation} is added to
 the previous functions \emph{minimum}, \emph{maximum}, \emph{mean} 
-and \emph{median}. Each one iss applied to the feature sub-vectors and 
+and \emph{median}. Each one is applied to the feature sub-vectors and 
 results are concatenated, leading to a total of 180 features for each audio file.
 Scaling yields to promising results on the first dataset, 
 so the same approach is applied to the extended one.
@@ -157,4 +164,53 @@ components is not given explicitly, indeed we try to preserve 99 percent of the 
 This technique resulted in 102 features, unfortunately, a model applied to this new dataset 
 failed to reach the performances obtained by the previous one, nonetheless, performances
 improved with respect to the scaled dataset.
+
+\subsection{Image dataset}
+A completely different approach is followed this time to represent audio files 
+as images, to later apply a convolutional neural network.
+
+\paragraph{Audio as an image}
+Representing an audio as an image is not straightforward but can be done after 
+some preprocessing.
+The main idea is to use audio features and consider them in a two dimensional 
+space, where the value of a single cell can be viewed as a pixel.
+Note that some features are well suited for this kind of representation, for instance, 
+some of the previously extracted ones are given in output as a two dimensional vector.
+
+Usually, an image has three channels, red, green and blue, but 
+image classification on grayscale images, with one single channel 
+is also relevant. This means that one can extract multiple features and view them 
+as different channels, or choose only one to have the equivalent of a grayscale image.
+
+\paragraph{Short time Furier Transform}
+For this try with image classification the Short-time Furier transform 
+is extracted from the audio files, and the used as a single channel image. 
+In particular, we extract 128 intervals, and, to accomodate 
+the different lenghts of audio in the dataset, pad the result to 256 width vectors.
+
+The result is an $128 \times 256$ image for each sample. Figure \ref{img}
+shows a sample of an image obtained for each class.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{images/class_images.png}  
+    \caption{Short time Furier transform on samples coming from each class.
+    The scale on the Y axis is logarithmic, the X axis represent time and 
+    the black portion on the edges is due to the applied padding.}  
+    \label{img}
+\end{figure}
+
+We can see some difference between the classes, for instance, the \emph{dog barking}
+shows short repeated sounds, \emph{gun shot} has a declining intensity, while \emph{air conditioner}
+is constant. The hope is that those subtle differences are enough lo learn and classify.
+
+\paragraph{Scaling pixel values}
+Scaling techniques  are usually applied even to images to prevent high disparities 
+among pixel value ranges, for this reason a Standard scaler with default parameters is 
+once again applied to the training set to mitigate this effect.
+We can not apply directly to the images, as they are two dimensional, but we can 
+flatten the pixel arrays, apply scaling and reshape them in the original $128 \times 256$ format.
+
+Testing a convolutional network 
+on the image dataset gives results that are comparable to the ones obtained on the initial scaled training 
+set, discussed at Subsection \vref{first}.
 \newpage

@@ -214,3 +214,46 @@ class Features:
             save_name = self.save_name
 
         dataframe.to_csv(f"{self.save_path}/{save_name}.csv", index=False)
+        
+    def get_images(self, audio_file):
+        
+        def padding(array, xx, yy):
+            h = array.shape[0]
+            w = array.shape[1]    
+            a = max((xx - h) // 2,0)
+            aa = max(0,xx - a - h)
+            b = max(0,(yy - w) // 2)
+            bb = max(yy - b - w,0)
+            return np.pad(array, pad_width=((a, aa), (b, bb)), mode='constant')
+        
+        y, sr = librosa.load(audio_file)
+            
+        return padding(np.abs(librosa.stft(y, n_fft=255, hop_length = 512)), 128, 256)
+    
+    def get_save_image_training_set(self):
+
+        data = pd.read_csv(self.metadata_path)
+        training_data = data[data["fold"].isin(self.folds)]
+        values = training_data[["slice_file_name", "fold", "classID"]].values
+        
+        @delayed
+        def m(x):
+            audio_path = f"{self.audio_files_path}/fold{x[1]}/{x[0]}"
+            return (self.get_images(audio_path), int(x[2]))
+        
+        Client(n_workers = self.workers)
+        
+        feature_arrays = []
+        for e in values:
+            r = m(e)
+            feature_arrays.append(r)
+        
+        feature_arrays = dask.compute(*feature_arrays)
+        
+        features = np.array([e[0] for e in feature_arrays])
+        labels = np.array([e[1] for e in feature_arrays])
+        
+        np.save(f"{self.save_path}/{self.save_name}_features.npy", features)
+        np.save(f"{self.save_path}/{self.save_name}_labels.npy", labels)
+        
+        return features, labels

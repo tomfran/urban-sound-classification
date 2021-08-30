@@ -1,12 +1,22 @@
 \section{Model definition}
 \label{model-definition}
 
-This Section starts by presenting how the networks used on the initial training sets are 
-structured. We proceed to give a detailed overview of the performances 
-on the different training sets, lastly, the hyperparameter tuning phase
-is described.
+This Section gives an overview of the models used on the different 
+training sets. We first start with the multilayer perceptrons and 
+end with the convolutional networks used on the image dataset.
 
-\subsection{Neural network structure}
+For both models we present the architecture, the initial results 
+and the hyperparameter tuning phase.
+
+\subsection{Multilayer perceptron}
+
+The first model used in the experiments is a Multilayer perceptron. 
+The considered training sets are the ones presented on Subsection 2.2 and 2.3 minus the image 
+dataset, 
+namely the first and extended datasets. For the first one, scaled and unscaled 
+versions are considered, while for the second the normal and PCA version are tested.
+
+\subsubsection{Network structure}
 The starting point for the neural network structure is a 
 reasonable network in terms of hidden neurons to prevent over-fitting, 
 indeed a high number of units in the hidden layers would end up in learning 
@@ -39,58 +49,61 @@ To build the actual model \emph{Tensorflow} and \emph{Keras} libraries
 are used.~\cite{tensorflow}\cite{keras}
 
 \paragraph{Starting point model}
-To give reference, this is the model used on the PCA training set, mentioned at 
+To give reference, Figure \ref{mod} the model used on the PCA training set, mentioned at 
 the end of Subsection \vref{extended-dataset}, with 
 102 input features.
-\begin{center}
-    
-    \begin{tikzpicture}[x=1.5cm, y=1cm, >=stealth]
-        
-        % layers
-        \foreach \m/\l [count=\y] in {1,2,3,missing,4}
-        \node [every neuron/.try, neuron \m/.try] (input-\m) at (0,2.5-\y) {};
-        
-        \foreach \m [count=\y] in {1,missing,2}
-        \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (1.75,3-\y*1.75) {};
-        
-        \foreach \m [count=\y] in {1,missing,2}
-        \node [every neuron/.try, neuron \m/.try ] (hidden2-\m) at (3.5,2-\y*1.25) {};
-        
-        \foreach \m [count=\y] in {1,missing,2}
-        \node [every neuron/.try, neuron \m/.try ] (output-\m) at (5.25,1.5-\y) {};
-        
-        %   label
-        \foreach \l [count=\i] in {1,2,3,{102}}
-        \draw [<-] (input-\i) -- ++(-1,0)
-        node [above, midway] {$I_{\l}$};
-        
-        \foreach \l [count=\i] in {1,45}
-        \node [above] at (hidden-\i.north) {$H_{\l}$};
-        
-        \foreach \l [count=\i] in {1,30}
-        \node [above] at (hidden2-\i.north) {$H_{\l}$};
-        
-        \foreach \l [count=\i] in {1,10}
-        \draw [->] (output-\i) -- ++(1,0)
-        node [above, midway] {$O_{\l}$};
-        
-        \foreach \i in {1,...,4}
-        \foreach \j in {1,...,2}
-        \draw [->] (input-\i) -- (hidden-\j);
-        
-        \foreach \i in {1,...,2}
-        \foreach \j in {1,...,2}
-        \draw [->] (hidden-\i) -- (hidden2-\j);
-        
-        \foreach \i in {1,...,2}
-        \foreach \j in {1,...,2}
-        \draw [->] (hidden2-\i) -- (output-\j);
-        
-        \foreach \l [count=\x from 0] in {Input, 1st Hidden, 2nd Hidden, Output}
-        \node [align=center, above] at (\x*1.75,2) {\l \\ layer};
-        
-    \end{tikzpicture}
-\end{center}
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[x=1.5cm, y=1cm, >=stealth]
+            
+            % layers
+            \foreach \m/\l [count=\y] in {1,2,3,missing,4}
+            \node [every neuron/.try, neuron \m/.try] (input-\m) at (0,2.5-\y) {};
+            
+            \foreach \m [count=\y] in {1,missing,2}
+            \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (1.75,3-\y*1.75) {};
+            
+            \foreach \m [count=\y] in {1,missing,2}
+            \node [every neuron/.try, neuron \m/.try ] (hidden2-\m) at (3.5,2-\y*1.25) {};
+            
+            \foreach \m [count=\y] in {1,missing,2}
+            \node [every neuron/.try, neuron \m/.try ] (output-\m) at (5.25,1.5-\y) {};
+            
+            %   label
+            \foreach \l [count=\i] in {1,2,3,{102}}
+            \draw [<-] (input-\i) -- ++(-1,0)
+            node [above, midway] {$I_{\l}$};
+            
+            \foreach \l [count=\i] in {1,45}
+            \node [above] at (hidden-\i.north) {$H_{\l}$};
+            
+            \foreach \l [count=\i] in {1,30}
+            \node [above] at (hidden2-\i.north) {$H_{\l}$};
+            
+            \foreach \l [count=\i] in {1,10}
+            \draw [->] (output-\i) -- ++(1,0)
+            node [above, midway] {$O_{\l}$};
+            
+            \foreach \i in {1,...,4}
+            \foreach \j in {1,...,2}
+            \draw [->] (input-\i) -- (hidden-\j);
+            
+            \foreach \i in {1,...,2}
+            \foreach \j in {1,...,2}
+            \draw [->] (hidden-\i) -- (hidden2-\j);
+            
+            \foreach \i in {1,...,2}
+            \foreach \j in {1,...,2}
+            \draw [->] (hidden2-\i) -- (output-\j);
+            
+            \foreach \l [count=\x from 0] in {Input, 1st Hidden, 2nd Hidden, Output}
+            \node [align=center, above] at (\x*1.75,2) {\l \\ layer};
+        \end{tikzpicture}
+    \end{center}
+    \caption{Multilayer perceptron architecure used on the PCA dataset}
+    \label{mod}
+\end{figure}
+
 This last model, with the one built to predict the 180 features training set, are the ones selected for 
 the hyperparameter tuning phase. 
 
@@ -110,11 +123,7 @@ Although more complex optimizers exist, build to reduce training
 cost or achieve better performances on deep networks, the one choosen 
 for this model is a classic Stochastic Gradient Descent optimizer.
 
-Testing some more advanced optimizers shows that convergence is reached faster on the 
-networks used in the experiments, but the speed increase is negligible as the model
-is quite small.
-
-\subsection{Initial training set results}
+\subsubsection{Training set results}
 
 Section \vref{feature-extraction} talks about the four different 
 training sets obtained from the dataset and, without going into details, 
@@ -132,7 +141,9 @@ applied when fitting the model. One of the possible approaches, and the one foll
 here, is to assign class weights. 
 
 The main idea is to penalize errors made on not well represented classes to account 
-for their minority. Class weights computation relies on the \emph{compute class weights} function
+for their minority, in particular, each class has weight:
+$$w_i = \frac{\#\mathit{total\;samples}}{\#\mathit{classes} * \#\mathit{samples\;of\;class\;i}}$$
+Class weights computation relies on the \emph{compute class weights} function with the balanced logic
 from sklearn.~\cite{classweight}\\
 The following are the computed quantities for the dataset classes:
 \begin{center}
@@ -194,7 +205,7 @@ that small refinements are made.
 As accuracy is the best on the last two training sets, those are the two selected to 
 perform the hyperparameter tuning.
 
-\subsection{Hyperparameter tuning}
+\subsubsection{Hyperparameter tuning}
 
 The last two tries with feature extraction lead to the best results 
 with stratified cross-validation. Although the two models are reasonable, 
@@ -252,8 +263,8 @@ The random search is performed on two models, with those starting dimensions:
     \item \emph{PCA model}: 102, 45, 30 and 10;
 \end{itemize}
 
-An \emph{early stopper} with default parameters is used on the training to stop it when no progress is made with 
-respect to the last epoch results.~\cite{early}
+An \emph{early stopper} with patience equals to three is used on the training to stop it when no progress is made with 
+respect to the last three epochs result.~\cite{early}
 The search is performed with 100 iterations for both rounds.
 
 \paragraph{Final models}
@@ -273,7 +284,7 @@ We can see an improvement in accuracy by comparing it with to starting point mod
         Model & Mean accuracy & St. deviation \\
         \hline
         Initial extended model & 0.6363 & 0.0494\\
-        Random search result & 0.6497 & 0.0431\\
+        Random search result & 0.6550 & 0.0388\\
         \hline
     \end{tabular}
 \end{center}
@@ -297,5 +308,13 @@ As before, comparing it with the starting model, we can see some better results:
         \hline
     \end{tabular}
 \end{center}
+
+\subsection{Convolutional neural network}
+
+\subsubsection{Network structure}
+
+\subsubsection{Training set results}
+
+\subsubsection{Hyperparameter tuning}
 
 \newpage

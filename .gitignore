@@ -7,6 +7,7 @@ data/processed/cnn
 data/raw
 *dask*
 .vscode
+notebooks/05*
 notebooks/test*
 *references.txt
 
