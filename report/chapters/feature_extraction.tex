@@ -12,6 +12,7 @@ is densely connected  to the following,
 with a reasonable number of neurons, trained 
 for 100 epochs with default parameters for the \emph{stochastic gradient 
 descent optimizer}.~\cite{mlp}\cite{sgd}\\
+
 A \emph{convolutional neural network}, a network with 
 a series of convolutional and pooling layers, followed by 
 some densely connected ones, is applied to the image dataset, trained for 10 epochs.~\cite{cnn} \\
@@ -91,6 +92,7 @@ are these three ones:
     \item \emph{Chromagram}: the first 12 chromas are considered;
     \item \emph{Root-mean-square}.
 \end{enumerate}
+Method parameters that are not specified in the above list, are left on their default values.
 Each feature consists of an array of arrays containing measurements. 
 A series of functions are applied to each sub-array and results 
 are concatenated in a final feature vector. 
@@ -136,7 +138,8 @@ new audio characteristics are extracted, namely:
     \item \emph{Roll-off frequency};
     \item \emph{Spectral flux onset strength}.
 \end{enumerate}
-This time \emph{standard deviation} is added to
+As before methods parameters are left on default, but 
+this time \emph{standard deviation} is added to
 the previous functions \emph{minimum}, \emph{maximum}, \emph{mean} 
 and \emph{median}. Each one is applied to the feature sub-vectors and 
 results are concatenated, leading to a total of 180 features for each audio file.
@@ -186,10 +189,10 @@ as different channels, or choose only one to have the equivalent of a grayscale 
 For this try with image classification the Short-time Furier transform 
 is extracted from the audio files, and then used as a single channel image. 
 In particular, we extract 128 intervals, and, to accomodate 
-the different lenghts of audio in the dataset, pad the result to 256 width vectors.
+the different lenghts of audio in the dataset, pad the result to 256 wide vectors.
 
 The result is an $128 \times 256$ image for each sample. Figure \ref{img}
-shows a sample of an image obtained for each class.
+shows an example of an image obtained for each class.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{images/class_images.png}  
@@ -207,7 +210,7 @@ is constant. The hope is that those subtle differences are enough lo learn and c
 Scaling techniques  are usually applied even to images to prevent high disparities 
 among pixel value ranges, for this reason a Standard scaler with default parameters is 
 once again applied to the training set to mitigate this effect.
-We can not apply directly to the images, as they are two dimensional, but we can 
+We can not apply it directly to the images, as they are two dimensional, but we can 
 flatten the pixel arrays, apply scaling and reshape them in the original $128 \times 256$ format.
 
 Testing a convolutional network 

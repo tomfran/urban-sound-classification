@@ -10,9 +10,8 @@ and the hyperparameter tuning phase.
 
 \subsection{Multilayer perceptron}
 
-The first model used in the experiments is a Multilayer perceptron. 
-The considered training sets are the ones presented on Subsection 2.2 and 2.3 minus the image 
-dataset, 
+The first model used in the experiments is a multilayer perceptron. 
+The considered training sets are the ones presented on Subsection 2.2 and 2.3 
 namely the first and extended datasets. For the first one, scaled and unscaled 
 versions are considered, while for the second the normal and PCA version are tested.
 
@@ -100,7 +99,7 @@ the end of Subsection \vref{extended-dataset}, with
             \node [align=center, above] at (\x*1.75,2) {\l \\ layer};
         \end{tikzpicture}
     \end{center}
-    \caption{Multilayer perceptron architecure used on the PCA dataset}
+    \caption{MLP architecure used on the PCA dataset}
     \label{mod}
 \end{figure}
 
@@ -143,6 +142,7 @@ here, is to assign class weights.
 The main idea is to penalize errors made on not well represented classes to account 
 for their minority, in particular, each class has weight:
 $$w_i = \frac{\#\mathit{total\;samples}}{\#\mathit{classes} * \#\mathit{samples\;of\;class\;i}}$$
+
 Class weights computation relies on the \emph{compute class weights} function with the balanced logic
 from sklearn.~\cite{classweight}\\
 The following are the computed quantities for the dataset classes:
@@ -186,7 +186,17 @@ For this step the \emph{Stratified KFold} class from scikit learn is used.~\cite
 
 \paragraph{Results}
 The following are the results on the training sets, using the architectures 
-presented at the beginning of the Subsection.
+presented at the beginning of the Subsection. 
+
+The runs are performed with a five fold stratified cross-validation. 
+At each fit, epochs are fixed at 100, 
+batch size is set at 64 and class weights, computed once on 
+the entire training set, are considered. 
+The optimizer is the stochastic gradient descent with zero momentum and 
+0.01 learning rate. 
+
+Mean accuracy and standard deviation are finally computed on the 
+folds results.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
@@ -240,12 +250,12 @@ search in preferred.
 We now run a random search with various parameters 
 to optimize the initial models.
 Note that class weights are still considered and the models are evaluated
-again with a stratified cross-validation.
+again with a five fold stratified cross-validation.
 The optimizer used is the stochastic gradient descent.
 
 The considered ranges for parameters for this run are: 
 \begin{enumerate}
-    \item \emph{Neurons}: input layer has dimension $I$ and last layer $O$, while 
+    \item \emph{Neurons}: input layer has dimension $I$, last layer is fixed at 10, while 
     the two hidden layers are tested with a number of neurons respectively 
     equals to: 
     $$H_1 + 2i\;\;\text{and}\;\;H_2 + 2j,\;\;\text{with}\;\; i, j \in \{-2,-1,0,1,2\}$$
@@ -255,16 +265,16 @@ The considered ranges for parameters for this run are:
     \item \emph{Batch size}: $32, 64$.
 \end{enumerate}
 
-Where $I$, $H_1$, $H_2$ and $O$ are input, first hidden, second hidden 
-and output layer dimensions, thus they depend on the initial architecture.
+The quantities $I$, $H_1$, $H_2$, which are input, first hidden and second hidden 
+layer dimensions, depend on the initial network architecture.
 As stated before, the two models considered are the following: 
 \begin{center}
-    \begin{tabular}{ |l|r|r|r|r|} 
+    \begin{tabular}{ |l|r|r|r|} 
         \hline
-        Model name & $I$ & $H_1$ & $H_2$ & $O$ \\
+        Model name & $I$ & $H_1$ & $H_2$ \\
         \hline
-        Extended model & 180 & 80 & 46 & 10 \\
-        PCA model & 102 & 45 & 30 & 10 \\
+        Extended model & 180 & 80 & 46 \\
+        PCA model & 102 & 45 & 30 \\
         \hline
     \end{tabular}
 \end{center}
@@ -274,7 +284,7 @@ respect to the last three epochs result.~\cite{early}
 The search is performed with 100 iterations for both rounds.
 
 \paragraph{Final models}
-The first round of the random search, performed on the Extended model, resulted 
+The first round of the random search, performed on the Extended model, finds 
 in the following parameters:
 \begin{itemize}
     \item Neurons: 180 for input, 76 for the first hidden layer, 50 for the second and 10 for output;
@@ -295,7 +305,7 @@ We can see an improvement in accuracy by comparing it to the starting point mode
     \end{tabular}
 \end{center}
 
-The second random search on the smaller PCA model, resulted in this results:
+The second random search on the smaller PCA model, finds these parameters:
 \begin{itemize}
     \item Neurons: 102 for input, 45 for the first hidden layer, 32 for the second and 10 for output;
     \item Momentum: 0.01
@@ -315,6 +325,12 @@ As before, comparing it with the starting model, we can see some better results:
     \end{tabular}
 \end{center}
 
+\paragraph{Final remarks on MLP}
+Unexpectedly PCA application lead to worse results compared to the 180
+feature dataset. Even after the random search, the so called Tuned Extended model
+performs better. For this reason this is the final multilayer perceptron
+evaluated on the test set.
+
 \subsection{Convolutional neural network}
 This subsection presents the results obtained by a convolutional
 neural network trained on the image datasets presented at the end of 
@@ -331,29 +347,64 @@ The main idea is to extract relevant features from the images
 with the convolutional layers, that apply a kernel to the input 
 to detect patterns and image features.
 After the convolution part there is a pooling layer that reduces dimensionality.
+At the end, densely connected layers classify the obtained features.
 
+\paragraph{Stacking convolutions}
 Taking inspiration from the \emph{VGG19 architecture}, that stacks two or more 
 convolutional layers to then apply pooling, the network is built with 
 the following layers:~\cite{vgg}
 \begin{itemize}
-    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation
-    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation
-    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 2 strides
-    \item \emph{Convolution}: 32 filters, kernel size of $3 \times 3$, Relu activation
-    \item \emph{Convolution}: 32 filters, kernel size of $3 \times 3$, Relu activation
-    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 2 strides
-    \item \emph{Flatten}
-    \item \emph{Dense}: 100 neurons and Relu activation
-    \item \emph{Dense}: 40 neurons and Relu activation
+    \item \emph{Convolution}: 8 filters, kernel size of $5 \times 5$, Relu activation, 1 stride
+    \item \emph{Convolution}: 8 filters, kernel size of $5 \times 5$, Relu activation, 1 stride
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 3 strides
+    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation, 1 stride
+    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation, 1 stride
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 3 strides
+    \item \emph{Flatten layer}
+    \item \emph{Dense layers}: dimensions are 2000, 800, 200 and 60, Relu activation
     \item \emph{Output}: 10 neurons and softmax activation
 \end{itemize}
 
-\subsubsection{Training set results}
-To have an idea of the performances of the initial convolutional network,
-a cross validation is performed on the image training set. 
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{images/cnn.png}  
+    \caption{Diagram of the network used in the experiments, we can see 
+    the first two convolutions, followed by the max pooling layer. After that, two other convolutions and 
+    another max pooling, and finally the densely connected ones. We can see the principle of 
+    learning higher level features and fine grain ones, indeed the dimensionality increases 
+    from the first convolutions to the seconds.}  
+    \label{cnn}
+\end{figure}
 
-As before, a stratified cross-validation is used with five folds, thus, 
-results can be compared to the multilayer perceptrons previously trained.
+\paragraph{Kernel sizes, filters and strides}
+Two crucial parameters for a convolutional layers are the number of filters, 
+the kernel size and strides dimensions. 
+The filter number represent the number of ways a 
+convolutional layer sees the image, while the kernel size makes the area 
+considered by the layer bigger or smaller. One can see a small kernel size as a way 
+of learning fine grain features, on the opposite, a bigger size capture higher level image characteristics.
+Finally, strides determine the reduction on the output shape, for instance, a stride equals to 
+two, reduces the output shape in half.
+
+One important factor in choosing the values for this parameters is the output dimensionality, 
+in fact, while strides reduces it, higher filters and smaller kernels increase 
+the feature space.
+
+For this reasons, filters number is smaller and kernel size is bigger for the first 
+convolutional layers, while we have more filters and smaller kernel for the consequent ones.
+The idea is to learn higher level features first, to then capture small peculiarities.
+For the first architecture stride on convolutional layers is kept at one, later, an higher value is tested.
+
+\subsubsection{Training set results}
+We now present the results on the image dataset using the model introduced in 
+the \emph{Stacking convolutions} paragraph. Stratified 
+cross validation with five folds is once again used, the number of epochs 
+is fixed at 10 and we use an early stopper with patience equals to 2, to stop training 
+if no improvement is made on accuracy for two epochs. The principle of 
+class weights, introduced with the previous experiments, is reused this time.
+The optimizer used it the Adam one, with learning rate set to 0.001.
+
+We can compare results with previously tuned multilayer perceptrons, as the validation
+technique is the same.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
@@ -361,34 +412,89 @@ results can be compared to the multilayer perceptrons previously trained.
         \hline
         Tuned extended model& 0.6497 & 0.0431 \\
         Tuned PCA model & 0.6270 & 0.0315 \\
-        Image dataset & xxx &  xxx \\
+        Initial CNN & 0.5383 & 0.0395 \\
         \hline
     \end{tabular}
 \end{center}
+Results with the CNN are a big downgrade from previously tested models, 
+but we need to consider the fact that those have their 
+hyperparameters tuned.
 
 \subsubsection{Hyperparameter tuning}
-Training a CNN is really expensive compared to the multilayer perceptrons.
+Training a CNN is really expensive compared to the MLP networks.
 Performing a full random search is infeasible with the resources we have, therefore, 
-to have an idea about the impact on accuracy of the network parameters, 
-we run cross validation on the following models:
-\begin{itemize}
-    \item x
-    \item x
-    \item x
-    \item x
-\end{itemize}
-
-\paragraph{Final training results}
+to have an idea about the impact on accuracy of the network parameters, we run 
+cross-validation on the following models, that, for simplicity, have a name.
 \begin{center}
-    \begin{tabular}{ |l|r|r| } 
+    \begin{tabular}{ |c|r|r|r|l| } 
         \hline
-        Training set & Mean accuracy & St. deviation \\
+        Name & Filters & C. strides & P. strides & Dense structure \\
         \hline
-        Tuned extended model& 0.6497 & 0.0431 \\
-        Tuned PCA model & 0.6270 & 0.0315 \\
-        Image dataset & xxx &  xxx \\
+        $C_1$ & 8 & 3 & 1 & 300, 150, 80, 25 \\
+        $C_2$ & 16 & 1 & 3 & 5000, 2000, 800, 200, 60 \\
+        $C_2$ & 16 & 3 & 3 & 600, 200, 80, 25 \\
         \hline
     \end{tabular}
 \end{center}
 
+The filter quantity represent the number of filters for the first convolutions. 
+The subsequent ones have double that quantity.
+Kernel size is fixed at $5 \times 5$ and $3 \times 3$ for the first two and last 
+two convolutional layers respectively. 
+
+The \emph{C. strides} values are the strides for convolutions, a value of one do not 
+reduce dimensionality, while a value of three reduces the output dimensionality by two thirds.\\
+The \emph{P. strides} are the pooling layers strides. As before, a value of one do not reduce
+dimensionality, while two cut the output in half.\\
+Lastly, the \emph{dense structure} sums up the last layers architecture. For instance, 
+the model $C_1$ have four consequent densely connected layers, with neurons 300, 150, 80 and 
+25, followed by a final output layer of 10 neurons.
+
+The rest of the network is the same as the initial CNN, thus activation is always a Relu, 
+apart from the Softmax on the output layer, pool size is fixed at $2 \times 2$.
+
+\paragraph{Cross-validation results}
+The following are cross-validation results. 
+The settings for the cross validation are the same ones presented in the \emph{Training set results}
+paragraph, apart from the epochs that this time are increased to 15.
+We can see that the $C_3$ model is the best performer, even if the differences among models are not really big.
+
+\begin{center}
+    \begin{tabular}{ |c|r|r| } 
+        \hline
+        Model name & Mean accuracy & St. deviation \\
+        \hline
+        Initial model & 0.5383 & 0.0395 \\
+        $C_1$ & 0.5347 & 0.0480 \\
+        $C_2$ & 0.5285 & 0.0325 \\
+        $C_3$ & 0.5412 & 0.0474 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\paragraph{Overfitting and underfitting}
+Cross-validation results gives an hint about overfitting and underfitting. Indeed, 
+by looking at the trainable parameters quantity using Keras summary function we have the following results.
+\begin{center}
+    \begin{tabular}{ |c|r| } 
+        \hline
+        Model name & Trainable parameters\\
+        \hline
+        Initial model & 13011950 \\
+        $C_1$ & 256095 \\
+        $C_2$ & 67957294 \\
+        $C_3$ & 923789 \\
+        \hline
+    \end{tabular}
+\end{center}
+The numbers might indicate that the $C_1$ model is underfitting, as the number 
+of parameters does not create the required complexity in the model to capture the dataset, 
+the $C_2$ and initial models are overfitting, as they have too many parameters 
+thus they are learning too much from the training. 
+$C_3$ seems to be at a sweet spot between the two, confirmed by the higher accuracy.
+
+\paragraph{Final remarks on CNN}
+Unfortunately, the high cost of training a CNN made impossibile to run a Random search 
+starting from the initial network structure. Results are worse than the ones obtained 
+with the MLP models. 
 \newpage

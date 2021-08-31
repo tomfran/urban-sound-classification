@@ -1,52 +1,62 @@
 \section{Conclusions}
 \label{results}
 
-This last Section shows the results obtained by the best model found 
-on the previous Section, namely the \emph{Extended model}, on the different test sets and
-gives an overview about possible future works to be made.
+This last Section presents results obtained on the test sets. 
+We test the best multilayer perceptron and the best convolutional network found.
 
 \subsection{Test set results}
 As stated on the first Section, the five test sets are made out of the 
 folds number five, seven, eight, nine and ten.
-Evaluating the extended model found by the random search on the test sets 
-gives the following results: 
 
+\paragraph{Test set preprocessing}
+The test sets are preprocessed with the same techniques used to extract the training sets.
+In particular, regarding the MLP dataset, with 180 features, the Standardscaler fitted on the 
+training set is reused on the test folds. 
+Similarly, the scaler used to scale pixel values on the image dataset is reused on the ones coming 
+from the test folds.
+
+\paragraph{Results}
+The MLP model is the fine tuned one coming from the hyperparameter tuning phase, 
+trained on the 180 features dataset, namely the \emph{Extended model}, 
+while the CNN one is the best performer from the tried convolutional models, 
+the so called $C_3$ network.
 \begin{center}
-    \begin{tabular}{ |l|r| } 
+    \begin{tabular}{ |l|r|r| } 
         \hline
-        Test set & Accuracy\\
+        Test set & MLP Accuracy & CNN Accuracy\\
         \hline
-        Fold 5 & 0.7425 \\
-        Fold 7 & 0.6038 \\
-        Fold 8 & 0.6873 \\
-        Fold 9 & 0.6348 \\
-        Fold 10 & 0.6858 \\ 
+        Fold 5 & 0.7425 & 0.5171\\
+        Fold 7 & 0.6038 & 0.5668\\
+        Fold 8 & 0.6873 & 0.5744\\
+        Fold 9 & 0.6348 & 0.5515\\
+        Fold 10 & 0.6858 & 0.5639\\ 
         \hline
     \end{tabular}
 \end{center}
 
-Finally, the mean accuracy and standard deviation are: 
+The mean accuracy and standard deviation are: 
 \begin{center}
-    \begin{tabular}{ |r|r| } 
+    \begin{tabular}{ |c|r|r| } 
         \hline
-        Mean accuracy & Standard deviation\\
+        Model & Mean accuracy & Standard deviation\\
         \hline
-        0.6708 & 0.0478 \\
+        MLP & 0.6708 & 0.0478 \\
+        CNN & 0.5547 & 0.0202 \\
         \hline
     \end{tabular}
 \end{center}
 
 \subsection{Future works}
 
-Results on the test sets are promising but there is definitely 
-room for improvement.
-
-Indeed, a more refined training set creation can be made, by exploiting 
+Results are better on MLP models, but CNNs
+shows potential on the problem.
+Results could be improved, indeed, 
+a more refined training set creation can be made, by exploiting 
 more features from the Librosa library, testing different type 
 of scalers and experimenting with different feature selection 
 techniques.
 
-Finally, the models used in the project are simple. More complex 
-neural networks, for instance with convolutional layers, could 
-perform better, also, a more extensive random search might improve
-results.
+Regarding the image dataset, more channels could be considered 
+by using more features as images, also, data augmentation techniques 
+could be applied in order to increase the cardinality of the dataset.
+Finally, with more computational power, a proper random search could be performed.
