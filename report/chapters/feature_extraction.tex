@@ -6,17 +6,17 @@ steps followed to create training and test sets from it.
 
 Note that the models mentioned in this section, for the first and 
 extended datasets are
-three layers \emph{multilayer perceptron}, 
+three layers \emph{multilayer perceptrons}, 
 a feed forward neural network where each layer 
 is densely connected  to the following, 
 with a reasonable number of neurons, trained 
 for 100 epochs with default parameters for the \emph{stochastic gradient 
 descent optimizer}.~\cite{mlp}\cite{sgd}\\
-
 A \emph{convolutional neural network}, a network with 
 a series of convolutional and pooling layers, followed by 
-some densely connected ones, is applied to the image dataset, trained for 10 epochs.~\cite{cnn} \\
-The accuracy on the training is computed with a \emph{cross-validation} 
+some densely connected ones, is applied to the image dataset, trained for 10 epochs
+with default parameters for the Adam optimizer.~\cite{cnn} \\
+For all datasets, the accuracy mentioned is computed with a \emph{cross-validation} 
 approach.~\cite{cross}\\
 
 A deeper discussion about the models structure as well as the validation
@@ -188,9 +188,8 @@ as different channels, or choose only one to have the equivalent of a grayscale 
 \paragraph{Short time Furier Transform}
 For this try with image classification the Short-time Furier transform 
 is extracted from the audio files, and then used as a single channel image. 
-In particular, we extract 128 intervals, and, to accomodate 
+In particular, we extract 128 intervals with the \emph{stft} function from Librosa, and, to accomodate 
 the different lenghts of audio in the dataset, pad the result to 256 wide vectors.
-
 The result is an $128 \times 256$ image for each sample. Figure \ref{img}
 shows an example of an image obtained for each class.
 

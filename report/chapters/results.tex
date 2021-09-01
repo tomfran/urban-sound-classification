@@ -9,17 +9,17 @@ As stated on the first Section, the five test sets are made out of the
 folds number five, seven, eight, nine and ten.
 
 \paragraph{Test set preprocessing}
-The test sets are preprocessed with the same techniques used to extract the training sets.
-In particular, regarding the MLP dataset, with 180 features, the Standardscaler fitted on the 
-training set is reused on the test folds. 
-Similarly, the scaler used to scale pixel values on the image dataset is reused on the ones coming 
-from the test folds.
+The test sets are preprocessed with the same techniques used to extract the training sets.\\
+In fact, regarding the MLP training set, the one with 180 features, all the features are extracted 
+from the test audio files and scaled using the pre-fitted Standardscaler.
+Similarly, regarding images, each pixel in the test images is scaled using the Standardscaler 
+fitted on the image training set.
 
 \paragraph{Results}
 The MLP model is the fine tuned one coming from the hyperparameter tuning phase, 
 trained on the 180 features dataset, namely the \emph{Extended model}, 
 while the CNN one is the best performer from the tried convolutional models, 
-the so called $C_3$ network.
+the so called $C_3$ network with 0.001 Adam learning rate.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline

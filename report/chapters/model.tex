@@ -53,7 +53,7 @@ the end of Subsection \vref{extended-dataset}, with
 102 input features.
 \begin{figure}
     \begin{center}
-        \begin{tikzpicture}[x=1.5cm, y=1cm, >=stealth]
+        \begin{tikzpicture}[x=1.6cm, y=0.9cm, >=stealth]
             
             % layers
             \foreach \m/\l [count=\y] in {1,2,3,missing,4}
@@ -102,9 +102,6 @@ the end of Subsection \vref{extended-dataset}, with
     \caption{MLP architecure used on the PCA dataset}
     \label{mod}
 \end{figure}
-
-This last model, with the one built to predict the 180 features training set, are the ones selected for 
-the hyperparameter tuning phase. 
 
 \paragraph{Activation and loss functions}
 The activation function for the input and hidden layers is a \emph{Relu}, 
@@ -195,7 +192,7 @@ the entire training set, are considered.
 The optimizer is the stochastic gradient descent with zero momentum and 
 0.01 learning rate. 
 
-Mean accuracy and standard deviation are finally computed on the 
+Mean accuracy and standard deviation are computed on the 
 folds results.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
@@ -283,6 +280,9 @@ An \emph{early stopper} with patience equals to three is used on the training to
 respect to the last three epochs result.~\cite{early}
 The search is performed with 100 iterations for both rounds.
 
+The Extended model is trained on the 180 features dataset, 
+while the PCA model on the 102 features dataset.
+
 \paragraph{Final models}
 The first round of the random search, performed on the Extended model, finds 
 in the following parameters:
@@ -354,22 +354,21 @@ Taking inspiration from the \emph{VGG19 architecture}, that stacks two or more
 convolutional layers to then apply pooling, the network is built with 
 the following layers:~\cite{vgg}
 \begin{itemize}
-    \item \emph{Convolution}: 8 filters, kernel size of $5 \times 5$, Relu activation, 1 stride
-    \item \emph{Convolution}: 8 filters, kernel size of $5 \times 5$, Relu activation, 1 stride
-    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 3 strides
-    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation, 1 stride
-    \item \emph{Convolution}: 16 filters, kernel size of $3 \times 3$, Relu activation, 1 stride
-    \item \emph{MaxPooling}: pooling size of $2 \times 2$, 3 strides
-    \item \emph{Flatten layer}
-    \item \emph{Dense layers}: dimensions are 2000, 800, 200 and 60, Relu activation
-    \item \emph{Output}: 10 neurons and softmax activation
+    \item \emph{Two Convolution layers}: each one with 8 filters, kernel size of $5 \times 5$, Relu activation, $1 \times 1$ stride;
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, $3 \times 3$ strides;
+    \item \emph{Two Convolution layers}: each one with 16 filters, kernel size of $3 \times 3$, Relu activation, $1 \times 1$ stride;
+    \item \emph{MaxPooling}: pooling size of $2 \times 2$, $3 \times 3$ strides;
+    \item \emph{Flatten layer};
+    \item \emph{Dense layers}: dimensions are 2000, 800, 200 and 60, Relu activation;
+    \item \emph{Output}: 10 neurons and softmax activation.
 \end{itemize}
 
 \begin{figure}[h]
     \includegraphics[width=\textwidth]{images/cnn.png}  
-    \caption{Diagram of the network used in the experiments, we can see 
-    the first two convolutions, followed by the max pooling layer. After that, two other convolutions and 
-    another max pooling, and finally the densely connected ones. We can see the principle of 
+    \caption{Diagram of the network used in the experiments. We can see 
+    the first two convolutions, followed by the max pooling layer, first two blue layers and 
+    the red one respectively. After that, two other convolutions and 
+    another max pooling, and finally the densely connected ones, in gray. We can see the principle of 
     learning higher level features and fine grain ones, indeed the dimensionality increases 
     from the first convolutions to the seconds.}  
     \label{cnn}
@@ -398,17 +397,18 @@ For the first architecture stride on convolutional layers is kept at one, later,
 We now present the results on the image dataset using the model introduced in 
 the \emph{Stacking convolutions} paragraph. Stratified 
 cross validation with five folds is once again used, the number of epochs 
-is fixed at 10 and we use an early stopper with patience equals to 2, to stop training 
+is fixed at 10 and we use an early stopper with patience equals to two, to stop training 
 if no improvement is made on accuracy for two epochs. The principle of 
-class weights, introduced with the previous experiments, is reused this time.
-The optimizer used it the Adam one, with learning rate set to 0.001.
+class weights, introduced with the previous MLP experiments, is reused this time.
+The optimizer is the Adam one, as it is built to speed up training on 
+deep neural networks, with learning rate set to 0.001.
 
 We can compare results with previously tuned multilayer perceptrons, as the validation
 technique is the same.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
-        Training set & Mean accuracy & St. deviation \\
+        Model & Mean accuracy & St. deviation \\
         \hline
         Tuned extended model& 0.6497 & 0.0431 \\
         Tuned PCA model & 0.6270 & 0.0315 \\
@@ -430,9 +430,10 @@ cross-validation on the following models, that, for simplicity, have a name.
         \hline
         Name & Filters & C. strides & P. strides & Dense structure \\
         \hline
-        $C_1$ & 8 & 3 & 1 & 300, 150, 80, 25 \\
-        $C_2$ & 16 & 1 & 3 & 5000, 2000, 800, 200, 60 \\
-        $C_2$ & 16 & 3 & 3 & 600, 200, 80, 25 \\
+        $C_0$ & 8 &  $1 \times 1$ & $3 \times 3$ & 2000, 800, 200, 60 \\
+        $C_1$ & 8 &  $2 \times 2$ & $2 \times 2$ & 300, 150, 80, 25 \\
+        $C_2$ & 16 & $1 \times 1$ & $3 \times 3$ & 5000, 2000, 800, 200, 60 \\
+        $C_2$ & 16 & $2 \times 2$ & $2 \times 2$ & 600, 200, 80, 25 \\
         \hline
     \end{tabular}
 \end{center}
@@ -442,35 +443,46 @@ The subsequent ones have double that quantity.
 Kernel size is fixed at $5 \times 5$ and $3 \times 3$ for the first two and last 
 two convolutional layers respectively. 
 
-The \emph{C. strides} values are the strides for convolutions, a value of one do not 
-reduce dimensionality, while a value of three reduces the output dimensionality by two thirds.\\
-The \emph{P. strides} are the pooling layers strides. As before, a value of one do not reduce
-dimensionality, while two cut the output in half.\\
+The \emph{C. strides} values are the strides for convolutions, a value of one does not 
+reduce dimensionality, while a value of three reduces the output dimensionality by an  half.\\
+The \emph{P. strides} are the pooling layers strides. As before, two reduces dimensionality 
+by an half and three by two thirds.\\
 Lastly, the \emph{dense structure} sums up the last layers architecture. For instance, 
-the model $C_1$ have four consequent densely connected layers, with neurons 300, 150, 80 and 
-25, followed by a final output layer of 10 neurons.
+the model $C_1$ have four consequent densely connected layers, with 300, 150, 80 and 
+25 neurons respectively, followed by a final output layer of 10 neurons.
 
+A different learning rate is also tested for the Adam optimizer, 
+indeed 0.001 and 0.003 runs are performed.
 The rest of the network is the same as the initial CNN, thus activation is always a Relu, 
-apart from the Softmax on the output layer, pool size is fixed at $2 \times 2$.
+apart from the Softmax on the output layer and pooling size is fixed at $2 \times 2$.
+
+Note that $C_0$ is the same as the initial model, but we retest it with another learning rate.
 
 \paragraph{Cross-validation results}
 The following are cross-validation results. 
 The settings for the cross validation are the same ones presented in the \emph{Training set results}
-paragraph, apart from the epochs that this time are increased to 15.
-We can see that the $C_3$ model is the best performer, even if the differences among models are not really big.
+Subsubsection, apart from the epochs that this time are increased to 15 and the Adam 
+learning rate that is now variable.
 
+We can see that the $C_3$ model is the best performer, even if the differences among models are not really big.
 \begin{center}
-    \begin{tabular}{ |c|r|r| } 
+    \begin{tabular}{ |c|r|r|r|r| } 
         \hline
-        Model name & Mean accuracy & St. deviation \\
+        \multirow{2}{*}{Model name} & \multicolumn{2}{c|}{0.001 l.r.} & \multicolumn{2}{c|}{0.003 l.r.}  \\
+        \cline{2-5}
+        & M. accuracy & St. deviation & M. accuracy & St. deviation \\
         \hline
-        Initial model & 0.5383 & 0.0395 \\
-        $C_1$ & 0.5347 & 0.0480 \\
-        $C_2$ & 0.5285 & 0.0325 \\
-        $C_3$ & 0.5412 & 0.0474 \\
+        $C_0$ & 0.5383 & 0.0395 & 0.5150 & 0.0253 \\
+        $C_1$ & 0.5347 & 0.0480 & 0.5223 & 0.0480 \\
+        $C_2$ & 0.5285 & 0.0325 & 0.3909 & 0.1455 \\
+        $C_3$ & 0.5412 & 0.0474 & 0.5341 & 0.0451 \\
         \hline
     \end{tabular}
 \end{center}
+
+The table shows that increasing the learning rate always leads to worse results.
+The best model found, and the one that is measured on the test set is 
+the $C_3$ architecture with 0.001 learning rate for the Adam optimizer.
 
 \paragraph{Overfitting and underfitting}
 Cross-validation results gives an hint about overfitting and underfitting. Indeed, 
@@ -480,7 +492,7 @@ by looking at the trainable parameters quantity using Keras summary function we 
         \hline
         Model name & Trainable parameters\\
         \hline
-        Initial model & 13011950 \\
+        $C_0$ & 13011950 \\
         $C_1$ & 256095 \\
         $C_2$ & 67957294 \\
         $C_3$ & 923789 \\
@@ -495,6 +507,7 @@ $C_3$ seems to be at a sweet spot between the two, confirmed by the higher accur
 
 \paragraph{Final remarks on CNN}
 Unfortunately, the high cost of training a CNN made impossibile to run a Random search 
-starting from the initial network structure. Results are worse than the ones obtained 
+starting from the initial network structure, nonetheless a total 
+of eight models are tested. Results are worse than the ones obtained 
 with the MLP models. 
 \newpage

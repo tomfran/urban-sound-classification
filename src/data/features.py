@@ -216,7 +216,13 @@ class Features:
         dataframe.to_csv(f"{self.save_path}/{save_name}.csv", index=False)
         
     def get_images(self, audio_file):
-        
+        """
+        Extract Short time furier transform from each audio file and pad it to be 128 x 256.
+        This will be used as an image later on.
+
+        Args:
+            audio_file (String): audio file path
+        """
         def padding(array, xx, yy):
             h = array.shape[0]
             w = array.shape[1]    
@@ -231,7 +237,13 @@ class Features:
         return padding(np.abs(librosa.stft(y, n_fft=255, hop_length = 512)), 128, 256)
     
     def get_save_image_training_set(self):
+        """
+        Get the image dataset by calilng get_images function for each file.
+        The results is saved with Numpy to disk.
 
+        Returns:
+            Features array, labels array: Numpy arrays with features and labels
+        """
         data = pd.read_csv(self.metadata_path)
         training_data = data[data["fold"].isin(self.folds)]
         values = training_data[["slice_file_name", "fold", "classID"]].values
