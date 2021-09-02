@@ -16,6 +16,7 @@ namely the first and extended datasets. For the first one, scaled and unscaled
 versions are considered, while for the second the normal and PCA version are tested.
 
 \subsubsection{Network structure}
+\label{net-str}
 The starting point for the neural network structure is a 
 reasonable network in terms of hidden neurons to prevent over-fitting, 
 indeed a high number of units in the hidden layers would end up in learning 
@@ -183,7 +184,7 @@ For this step the \emph{Stratified KFold} class from scikit learn is used.~\cite
 
 \paragraph{Results}
 The following are the results on the training sets, using the architectures 
-presented at the beginning of the Subsection. 
+presented at \vref{net-str}. 
 
 The runs are performed with a five fold stratified cross-validation. 
 At each fit, epochs are fixed at 100, 
@@ -284,7 +285,7 @@ The Extended model is trained on the 180 features dataset,
 while the PCA model on the 102 features dataset.
 
 \paragraph{Final models}
-The first round of the random search, performed on the Extended model, finds 
+The first round of the random search, performed on the Extended model, results 
 in the following parameters:
 \begin{itemize}
     \item Neurons: 180 for input, 76 for the first hidden layer, 50 for the second and 10 for output;
@@ -332,7 +333,7 @@ performs better. For this reason this is the final multilayer perceptron
 evaluated on the test set.
 
 \subsection{Convolutional neural network}
-This subsection presents the results obtained by a convolutional
+This Subsection presents the results obtained by a convolutional
 neural network trained on the image datasets presented at the end of 
 Section \vref*{feature-extraction}.
 We start by giving an overview of the network, to then proceed 
@@ -374,11 +375,11 @@ the following layers:~\cite{vgg}
     \label{cnn}
 \end{figure}
 
-\paragraph{Kernel sizes, filters and strides}
-Two crucial parameters for a convolutional layers are the number of filters, 
+\paragraph{Network parameters}
+Two crucial parameters for a convolutional layer are the number of filters, 
 the kernel size and strides dimensions. 
-The filter number represent the number of ways a 
-convolutional layer sees the image, while the kernel size makes the area 
+The filter number represent the number of ways the layer sees the image, 
+while the kernel size makes the area 
 considered by the layer bigger or smaller. One can see a small kernel size as a way 
 of learning fine grain features, on the opposite, a bigger size capture higher level image characteristics.
 Finally, strides determine the reduction on the output shape, for instance, a stride equals to 
@@ -393,15 +394,19 @@ convolutional layers, while we have more filters and smaller kernel for the cons
 The idea is to learn higher level features first, to then capture small peculiarities.
 For the first architecture stride on convolutional layers is kept at one, later, an higher value is tested.
 
+Regarding the max pooling layers, they run a window on the convolution result 
+to apply a max function and reduce dimensionality. A crucial parameter is the pool size. The 
+first architecture keeps it at two,  but later three is tested.
+
 \subsubsection{Training set results}
 We now present the results on the image dataset using the model introduced in 
 the \emph{Stacking convolutions} paragraph. Stratified 
 cross validation with five folds is once again used, the number of epochs 
-is fixed at 10 and we use an early stopper with patience equals to two, to stop training 
+is fixed at 15 and we use an early stopper with patience equals to two, to stop training 
 if no improvement is made on accuracy for two epochs. The principle of 
 class weights, introduced with the previous MLP experiments, is reused this time.
 The optimizer is the Adam one, as it is built to speed up training on 
-deep neural networks, with learning rate set to 0.001.
+deep neural networks, with learning rate set to 0.001. Batch size is fixed at 32.
 
 We can compare results with previously tuned multilayer perceptrons, as the validation
 technique is the same.
@@ -453,16 +458,16 @@ the model $C_1$ have four consequent densely connected layers, with 300, 150, 80
 
 A different learning rate is also tested for the Adam optimizer, 
 indeed 0.001 and 0.003 runs are performed.
+Also, two different batch sizes are tested, 32 and 64.
 The rest of the network is the same as the initial CNN, thus activation is always a Relu, 
-apart from the Softmax on the output layer and pooling size is fixed at $2 \times 2$.
+apart from the Softmax on the output layer and pooling size is fixed at $2 \times 2$. 
 
-Note that $C_0$ is the same as the initial model, but we retest it with another learning rate.
+Trying all combinations of learning rate and batch size is too expensive, so, 
+we first try to increase learning rate with 32 batch size, then, on the best learning rate, 
+we try to increase batch size to 64.
 
 \paragraph{Cross-validation results}
-The following are cross-validation results. 
-The settings for the cross validation are the same ones presented in the \emph{Training set results}
-Subsubsection, apart from the epochs that this time are increased to 15 and the Adam 
-learning rate that is now variable.
+The following are cross-validation results, again with five folds stratified cross-validation.
 
 We can see that the $C_3$ model is the best performer, even if the differences among models are not really big.
 \begin{center}
@@ -480,9 +485,27 @@ We can see that the $C_3$ model is the best performer, even if the differences a
     \end{tabular}
 \end{center}
 
-The table shows that increasing the learning rate always leads to worse results.
+The table shows that increasing the learning rate always leads to worse results, thus 
+we now keep learning rate at 0.001 and try with 64 batch size.
+
+\begin{center}
+    \begin{tabular}{ |c|r|r|r|r| } 
+        \hline
+        \multirow{2}{*}{Model name} & \multicolumn{2}{c|}{32 batch size} & \multicolumn{2}{c|}{64 batch size}  \\
+        \cline{2-5}
+        & M. accuracy & St. deviation & M. accuracy & St. deviation \\
+        \hline
+        $C_0$ & 0.5383 & 0.0395 & 0.5272 & 0.0446 \\
+        $C_1$ & 0.5347 & 0.0480 & 0.5096 & 0.0403 \\
+        $C_2$ & 0.5285 & 0.0325 & 0.5325 & 0.0512 \\
+        $C_3$ & 0.5412 & 0.0474 & 0.5212 & 0.0427 \\
+        \hline
+    \end{tabular}
+\end{center}
+
 The best model found, and the one that is measured on the test set is 
-the $C_3$ architecture with 0.001 learning rate for the Adam optimizer.
+the $C_3$ architecture with 0.001 learning rate for the Adam optimizer
+and 32 batch size.
 
 \paragraph{Overfitting and underfitting}
 Cross-validation results gives an hint about overfitting and underfitting. Indeed, 
@@ -508,6 +531,6 @@ $C_3$ seems to be at a sweet spot between the two, confirmed by the higher accur
 \paragraph{Final remarks on CNN}
 Unfortunately, the high cost of training a CNN made impossibile to run a Random search 
 starting from the initial network structure, nonetheless a total 
-of eight models are tested. Results are worse than the ones obtained 
+of twelve models are tested. Results are worse than the ones obtained 
 with the MLP models. 
 \newpage
