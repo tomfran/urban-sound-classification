@@ -9,7 +9,7 @@ For both models we present the architecture, the initial results
 and the hyperparameter tuning phase.
 
 \subsection{Multilayer perceptron}
-
+\label{mlp}
 The first model used in the experiments is a multilayer perceptron. 
 The considered training sets are the ones presented on Subsection 2.2 and 2.3 
 namely the first and extended datasets. For the first one, scaled and unscaled 
@@ -333,6 +333,7 @@ performs better. For this reason this is the final multilayer perceptron
 evaluated on the test set.
 
 \subsection{Convolutional neural network}
+\label{cnn}
 This Subsection presents the results obtained by a convolutional
 neural network trained on the image datasets presented at the end of 
 Section \vref*{feature-extraction}.
@@ -460,14 +461,15 @@ A different learning rate is also tested for the Adam optimizer,
 indeed 0.001 and 0.003 runs are performed.
 Also, two different batch sizes are tested, 32 and 64.
 The rest of the network is the same as the initial CNN, thus activation is always a Relu, 
-apart from the Softmax on the output layer and pooling size is fixed at $2 \times 2$. 
+apart from the Softmax on the output layer. 
 
 Trying all combinations of learning rate and batch size is too expensive, so, 
 we first try to increase learning rate with 32 batch size, then, on the best learning rate, 
 we try to increase batch size to 64.
 
 \paragraph{Cross-validation results}
-The following are cross-validation results, again with five folds stratified cross-validation.
+The following are cross-validation results, again with five folds stratified cross-validation 
+and class weights for training.
 
 We can see that the $C_3$ model is the best performer, even if the differences among models are not really big.
 \begin{center}
@@ -503,6 +505,7 @@ we now keep learning rate at 0.001 and try with 64 batch size.
     \end{tabular}
 \end{center}
 
+No improvement again after increasing the batch size, apart on $C_2$ architecture.
 The best model found, and the one that is measured on the test set is 
 the $C_3$ architecture with 0.001 learning rate for the Adam optimizer
 and 32 batch size.

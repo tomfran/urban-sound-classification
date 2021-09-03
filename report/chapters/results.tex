@@ -20,6 +20,7 @@ The MLP model is the fine tuned one coming from the hyperparameter tuning phase,
 trained on the 180 features dataset, namely the \emph{Extended model}, 
 while the CNN one is the best performer from the tried convolutional models, 
 the so called $C_3$ network with 0.001 Adam learning rate and 32 batch size.
+Parameters for both models can be seen at the end of Section \vref{mlp} and \vref{cnn}.
 \begin{center}
     \begin{tabular}{ |l|r|r| } 
         \hline
@@ -49,14 +50,12 @@ The mean accuracy and standard deviation are:
 \subsection{Future works}
 
 Results are better on MLP models, but CNNs
-shows potential on the problem.
-Results could be improved, indeed, 
-a more refined training set creation can be made, by exploiting 
+shows potential on the problem, both could be improved.\\ 
+Indeed, for MLP a more refined training set creation can be made, by exploiting 
 more features from the Librosa library, testing different type 
 of scalers and experimenting with different feature selection 
-techniques.
-
-Regarding the image dataset, more channels could be considered 
+techniques.\\
+Regarding the image dataset, more channels can be considered 
 by using more features as images, also, data augmentation techniques 
-could be applied in order to increase the cardinality of the dataset.
-Finally, with more computational power, a proper random search could be performed.
+would increase the cardinality of the dataset.
+Finally, with more computational power, a proper random search can be performed.
